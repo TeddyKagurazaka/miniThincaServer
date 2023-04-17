@@ -1,0 +1,2 @@
+# miniThincaServer
+mini ThincaPayment Server
