@@ -136,7 +136,12 @@
 
 如未正确通过OperateDeviceMessage设置机器状态，同样会引发Thinca层因nullptr access报错，或无法进入成功状态导致读卡器闪蓝灯（回到开头）。
 
-完成initAuth.jsp后，机台会请求 \{commonPrimaryUri\}/emlist.jsp 用于获取付款Api，流程和initAuth.jsp一样。<br/><b>注意：如果想在后面的支付环节获得识别机台的方式，此时下发的URL必须包含能识别机台的参数，否则除非重新认证没有其他办法可以获取。</b>
+完成以上步骤以及获取支付地址之后，机台将以上相关参数写入NVRAM(sysfile.dat 0x2000位置)，回到电子支付信息菜单，此时能看到ID和支持Brand，完成注册。
+
+## 获取支付Api地址
+
+完成initAuth.jsp后（以及每次开机的时候），机台会请求 \{commonPrimaryUri\}/emlist.jsp 用于获取付款Api，流程和initAuth.jsp一样。<br/>
+<b>注意：如果想在后面的支付环节获得识别机台的方式，此时下发的URL必须包含能识别机台的参数。</b>
 
 此时(通过OperateDeviceMessage REQUEST包)请求的AdditionalSecurity内容
 
@@ -145,8 +150,6 @@
 		"TermSerial":"ACAE01A9999" //只有这里能读到机器序列号了
 					//再不拿出来设置以后就见不到了
 	}
-
-完成以上步骤后，机台将以上相关参数写入NVRAM(sysfile.dat 0x2000位置)，回到电子支付信息菜单，此时能看到ID和支持Brand，完成注册。
 
 <i>TCAP包流程建议直接看代码，这要是每个包都写出来这玩意要塞爆</i>
 
@@ -328,7 +331,20 @@ OperateDeviceMessage可以直接操作ResponseDevicesMessage所列举的设备，有时候操作相
 	00 03 -> General Option
 		STATUS: 触发ioEvent，Payload为(00 00 00 00 00 00 00 00)(明文Json)
 
-	00 08 -> Generic NFC RW (操作Aime读卡器)(该类型包要求省略(Payload长度 + 2)部分，否则读取会错位
+	00 05 -> Generic R/W Event (操作Aime LED）(该类型包要求省略(Payload长度 + 2)部分，否则读取会错位)
+		CMD包塞任意可读字符即可，程序不处理，但必须得有
+		Payload格式如下:
+			(00 00)	//不处理，填充0
+			(03)	//必须为0x03，否则报错
+			(03)	//颜色控制，00:红,01:绿,02:蓝,03:白
+			(00)	//显示方式控制，00:常亮，01:关闭，02:闪烁
+			(00 08)	//接下来部分的长度，常亮状态最少为04，闪烁状态最少为08
+			(00 00) //不处理，填充0
+			(13 88) //总亮灯时间(毫秒)，此时为5秒
+			(01 f4)	//亮灯时间(毫秒)，此时为500毫秒
+			(01 f4) //灭灯时间(毫秒), 此时为500毫秒
+
+	00 08 -> Generic NFC RW (操作Aime读卡器)(该类型包要求省略(Payload长度 + 2)部分，否则读取会错位)
 		OPEN_RW: 开启读卡器(Payload为3byte, (00 00)(01:Mifare Only?,08:Felica Only?,09:Both?))
 		CLOSE_RW: 关闭读卡器(不要求Payload)
 		TARGET_DETECT: 检测卡片(Payload 4byte 最长等待时间(毫秒))

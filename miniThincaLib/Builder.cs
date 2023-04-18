@@ -22,11 +22,27 @@ namespace miniThincaLib
             var PaseliMessageCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, PaseliCmdPacket);
             PaseliMessageCmd.setParam(new byte[] { 0x00, 0x03 }); //Generic OPTION
 
-            var ledjson = JsonConvert.SerializeObject(new LedEventIo(3, 0, 20000, 0, 0, 0));
-            var ledJsonByte = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }.Concat(Encoding.UTF8.GetBytes(ledjson)).ToArray();
-            var ledJsonPacket = GenerateOpCmdPacket("STATUS", opCmdPacket: ledJsonByte);
-            var ledMessageCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, ledJsonPacket);
-            ledMessageCmd.setParam(new byte[] { 0x00, 0x03 }); //Generic OPTION
+
+            //LedCmd (00)(00)(a2 == 03)(a3 == 0,1,2,3)(a4 == 1,2)(byteLength)(2byte)(2byte)(2byte)(2byte)
+            //a3 = 03 a4 = 01
+            
+            var ledCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg,
+                   GenerateOpCmdPacket(new byte[]{ 0x31 },new byte[] {
+                       0x00,0x00,
+                       0x03,        //a2 必须为0x03
+                       0x03,        //a3 可以设置为0(红色),1(绿色),2(蓝色),3(白色)
+                       0x02,        //a4 可以设置为0,1,2
+                                    //  0的时候只读取a5[1],长度要求4  (常亮)
+                                    //  1的时候关闭
+                                    //  2的时候读取a5[1:3],长度要求8 （闪烁)
+                       0x00,0x08,   //后面部分长度
+                       0x00,0x00,   //a5 无视
+                       0x13,0x88,   //a5[1] 亮灯时间(5s)
+                       0x01,0xf4,   //a5[2] 开灯时间(msec)
+                       0x01,0xf4    //a5[3] 关灯时间(msec)
+                   },true)
+                );
+            ledCommand.setParam(new byte[] { 0x00, 0x05 });
 
             var openRwPacket = GenerateOpCmdPacket("OPEN_RW", new byte[] { 0x00, 0x00, 0x09 }, true); //(code1)(2byte code2) (code1==0)(code2 = 1(mifare only?),8(felica only?),9(both?))
                                                                                                       //9 AND 1 = 1
@@ -48,7 +64,7 @@ namespace miniThincaLib
 
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
             OperatePkt.AddSubType(PaseliMessageCmd);
-            OperatePkt.AddSubType(ledMessageCmd);
+            OperatePkt.AddSubType(ledCommand);
             OperatePkt.AddSubType(openRw);
             OperatePkt.AddSubType(detect);
             OperatePkt.AddSubType(RequestCmd);
@@ -76,6 +92,25 @@ namespace miniThincaLib
             var opCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, opCmdPacket);
             opCommand.setParam(new byte[] { 0x00, 0x03 });
 
+            var ledCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg,
+                   GenerateOpCmdPacket(new byte[] { 0x31 }, new byte[] {
+                       0x00,0x00,
+                       0x03,        //a2 必须为0x03
+                       0x01,        //a3 可以设置为0(红色),1(绿色),2(蓝色),3(白色)
+                       0x00,        //a4 可以设置为0,1,2
+                                    //  0的时候只读取a5[1],长度要求4  (常亮)
+                                    //  1的时候关闭
+                                    //  2的时候读取a5[1:3],长度要求8 （闪烁)
+                       0x00,0x08,   //后面部分长度
+                       0x00,0x00,   //a5 无视
+                       0x13,0x88,   //a5[1] 亮灯时间(5s)
+                       0x01,0xf4,   //a5[2] 开灯时间(msec)
+                       0x01,0xf4    //a5[3] 关灯时间(msec)
+                   }, true)
+                );
+            ledCommand.setParam(new byte[] { 0x00, 0x05 });
+
+
 
             //发送支付成功状态回服务器
             var returnSalesJson = new AdditionalSecurityMessage_AuthorizeSales();
@@ -98,6 +133,7 @@ namespace miniThincaLib
 
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
             OperatePkt.AddSubType(opCommand);
+            OperatePkt.AddSubType(ledCommand);
             OperatePkt.AddSubType(CurrentPacket);
             return OperatePkt.Generate();
         }

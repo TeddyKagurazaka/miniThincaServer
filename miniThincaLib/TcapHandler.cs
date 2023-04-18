@@ -89,6 +89,10 @@ namespace miniThincaLib
                         default:
                             return Builder.BuildFarewellResult();
                     }
+                case Models.TcapPacketType.Error:
+
+                    machineInfo.Remove(termSerial);
+                    return Builder.BuildFarewellResult();
                 default:
 					return Builder.BuildFarewellResult();
             }
@@ -97,12 +101,13 @@ namespace miniThincaLib
 
 		byte[] HandleAuthSalesPacket(Models.TcapMessageRequest request,string termSerial)
 		{
-            var currentInfo = machineInfo[termSerial];
-            if(currentInfo == null)
+            if (!machineInfo.ContainsKey(termSerial))
             {
-                machineInfo.Add(termSerial, new MachineInfo(TcapRequestType.AuthorizeSales, MachineState.RequestOp_InitCardSwipe));
-                return Builder.BuildGetAimeCardResult();
-            };
+                //machineInfo.Add(termSerial, new MachineInfo(TcapRequestType.AuthorizeSales, MachineState.RequestOp_InitCardSwipe));
+                return Builder.BuildFarewellResult();
+
+            }
+            var currentInfo = machineInfo[termSerial];
 
             currentInfo.lastRequest = DateTime.Now;
             if (currentInfo.state == MachineState.RequestOp_InitCardSwipe)
