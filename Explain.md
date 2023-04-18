@@ -6,7 +6,9 @@
 
 在机器选择 游戏-电子支付信息-机台认证-开始认证 后，机台会先检查VFD连接，连接正常后开始读授权卡流程
 
-授权卡的参数如下:
+授权卡的参数如下:<br />如果实在想偷懒，
+[这里有现成的](https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'E8ADB54FBE8D2DC44A16C6B339A06457C3A1253ED8910D6BA666A77F5A3E1FFC'%7D,%7B'option':'Hex','string':'2B0C9071661C20AFEC7061CC639E7BAB'%7D,'CBC','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=MzEzMTM0MzQzNTM1MzEzNDMxMzkzMTM5MzgzMTMwMzAzMTMxMzQzNTMxMzQzMTM5MzEzOTMxMzEzNDM1MzEzNDMxMzkzMTM5MzEzMTM1MzEzNDcwNjE3MzczNzA2ODcyNjE3MzY1MzEzMTM0MzUzMTM0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA)
+
 
 	授权卡本身为Mifare Classic类型，也就是刷你家门禁或者门锁的那张卡。
 	卡片密码为 thinca 转16进制 (74 68 69 6E 63 61)
@@ -21,7 +23,7 @@
 		Key:E8ADB54FBE8D2DC44A16C6B339A06457C3A1253ED8910D6BA666A77F5A3E1FFC
 		IV:2B0C9071661C20AFEC7061CC639E7BAB
 		Method:AES CBC
-
+		
 	加密后得到128byte 密文，将其写入卡片的Sector 1 第二排到 Sector 3 的第三排
 	设置Sector 1的第一排为 54 43 02 01(修改这一排好像会触发比如proxySetting之类的情况，会导致验证不通过，一般不动)
 
@@ -102,11 +104,47 @@
 
 	注意:只有这里(通过OperateDeviceMessage REQUEST包)可以获得机器参数！
 
+此时机器(通过OperateDeviceMessage REQUEST包)请求的AdditionalSecurity内容
+
+	<request service="DirectIO"
+		xmlns="http://www.hp.com/jp/FeliCa/ICASClient">	//注意这个xmlns,不设置Namespace的话XPath走不通
+		<userdata>
+			<properties>
+				<longValue name="ServiceObjectVersion" value="240"/>
+				<longValue name="PaymentMedia" value="9999"/>
+				<boolValue name="AsyncMode" value="true"/>
+				<boolValue name="TrainingMode" value="false"/>
+				<stringValue name="AdditionalSecurityInformation" value="{&quot;UniqueCode&quot;:&quot;ACAE01A9999&quot;,&quot;PassPhrase&quot;:&quot;ase114514&quot;,&quot;ServiceBranchNo&quot;:14,&quot;GoodsCode&quot;:&quot;0990&quot;}"/>
+			</properties>
+			<parameters>
+				<longValue name="Command" value="0"/>
+				<longValue name="pData" value="0"/>
+				<stringValue name="pString" value="GoodsCode=0990,PassPhrase=ase114514,ServiceBranchNo=14,UniqueCode=ACAE01A9999"/>
+			</parameters>
+		</userdata>
+	</request>
+
+
+	{
+		"UniqueCode":"ACAE01A9999",	//基本上只能在这读的到
+		"PassPhrase":"ase114514",	//授权卡里存的密码
+		"ServiceBranchNo":14,
+		"GoodsCode":"0990"
+	} 
+
 如此处包格式出现错误（无法解析包、参数不规范等），游戏会发回Error包，同时机器叫三声，提示注册失败。
 
 如未正确通过OperateDeviceMessage设置机器状态，同样会引发Thinca层因nullptr access报错，或无法进入成功状态导致读卡器闪蓝灯（回到开头）。
 
 完成initAuth.jsp后，机台会请求 \{commonPrimaryUri\}/emlist.jsp 用于获取付款Api，流程和initAuth.jsp一样。<br/><b>注意：如果想在后面的支付环节获得识别机台的方式，此时下发的URL必须包含能识别机台的参数，否则除非重新认证没有其他办法可以获取。</b>
+
+此时(通过OperateDeviceMessage REQUEST包)请求的AdditionalSecurity内容
+
+	{
+		"ServiceBranchNo":2,
+		"TermSerial":"ACAE01A9999" //只有这里能读到机器序列号了
+					//再不拿出来设置以后就见不到了
+	}
 
 完成以上步骤后，机台将以上相关参数写入NVRAM(sysfile.dat 0x2000位置)，回到电子支付信息菜单，此时能看到ID和支持Brand，完成注册。
 
@@ -123,6 +161,27 @@
 	第二组必为空，使用OperateDeviceMessage包开始调用读卡器/VFD显示刷卡信息
 	OperateDeviceMessage必然会有返回，解析返回结果来获取卡号/SeqNumber/支付额，通过OperateDeviceMessage返回支付状态包(相当于Receipt)
 	完事以后返回Farewell包完成TCAP通讯
+
+此时请求OperateDeviceMessage REQUEST获取到的内容:
+	
+	<request service="AuthorizeSales"
+		xmlns="http://www.hp.com/jp/FeliCa/ICASClient">
+		<userdata>
+			<properties>
+				<longValue name="ServiceObjectVersion" value="240"/>
+				<longValue name="PaymentMedia" value="8"/>		//BrandID 比如这里是paseli
+				<boolValue name="AsyncMode" value="true"/>
+				<boolValue name="TrainingMode" value="false"/>
+				<stringValue name="AdditionalSecurityInformation" value="{&quot;ServiceBranchNo&quot;:2,&quot;GoodsCode&quot;:&quot;0990&quot;}"/>
+			</properties>
+			<parameters>
+				<longValue name="SequenceNumber" value="51"/>		//SeqNumber，作区分请求用
+				<currencyValue name="Amount" value="100"/>		//支付额
+				<currencyValue name="TaxOthers" value="0"/>
+				<longValue name="Timeout" value="1000"/>
+			</parameters>
+		</userdata>
+	</request>
 
 Aime读卡器读卡必然带阻塞，要么带卡号返回，要么因为超时发送空包。注意如果超时时间过长会出现游戏等amd返回的情况。
 
