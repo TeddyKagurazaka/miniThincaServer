@@ -127,23 +127,25 @@ namespace miniThincaLib
 
                     var nsmgr = new XmlNamespaceManager(reqXml.NameTable);
                     nsmgr.AddNamespace("ICAS", "http://www.hp.com/jp/FeliCa/ICASClient");
-
+                    var PaymentMedia = (reqXml.SelectSingleNode("//ICAS:longValue[@name='PaymentMedia']", nsmgr) as XmlElement).GetAttribute("value");
+                    var BrandInt = short.Parse(PaymentMedia);
 
                     var SequenceNumber = (reqXml.SelectSingleNode("//ICAS:longValue[@name='SequenceNumber']", nsmgr) as XmlElement).GetAttribute("value");
                     var Amount = (reqXml.SelectSingleNode("//ICAS:currencyValue[@name='Amount']", nsmgr) as XmlElement).GetAttribute("value");
                     var AmountInt = int.Parse(Amount);
 
                     currentInfo.state = MachineState.RequestOp_SuccessPayment;
-                    return Builder.BuildSuccessPaymentResult(cardId, SequenceNumber, AmountInt);
+                    return Builder.BuildSuccessPaymentResult(cardId, SequenceNumber, AmountInt,BrandInt);
                 }
-                else if((currentInfo.lastRequest - currentInfo.firstRequest).TotalSeconds >= 28)
+                else if((currentInfo.lastRequest - currentInfo.firstRequest).TotalSeconds >= 30)
                 {
                     machineInfo.Remove(termSerial);
                     return Builder.BuildFarewellResult();
                 }
                 else
                 {
-                    return Builder.BuildGetAimeCardResult();
+                    //想了下 还是让他每5秒初始化一次算了 不然一开始停不下来
+                    return Builder.BuildFarewellResult();
                 }
             }
             else if (currentInfo.state == MachineState.RequestOp_SuccessPayment)

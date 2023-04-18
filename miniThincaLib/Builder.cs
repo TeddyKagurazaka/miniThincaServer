@@ -79,11 +79,11 @@ namespace miniThincaLib
         /// <param name="seqNumber">顺序号码，机台用于区分支付</param>
         /// <param name="amount">支付额，固定余额返回支付额+1</param>
         /// <returns></returns>
-        public static byte[] BuildSuccessPaymentResult(string cardNo = "01391144551419198100", string seqNumber = "1", int amount = 100)
+        public static byte[] BuildSuccessPaymentResult(string cardNo = "01391144551419198100", string seqNumber = "1", int amount = 100, short brandType = 8)
         {
 
             //var json = JsonConvert.SerializeObject(new MessageEventIo(0,0,8,30,20000)); -> PASELI支払 カードをタッチしてください
-            var json = JsonConvert.SerializeObject(new SoundEventIo(0, 8, 0, 20000)); //-> paseli//
+            var json = JsonConvert.SerializeObject(new SoundEventIo(0, brandType, 0, 20000)); //-> paseli//
                                                                                       //var json = JsonConvert.SerializeObject(new LedEventIo(0,0,20000,127,127,127)); // -> ?
                                                                                       //var json = JsonConvert.SerializeObject(new AmountEventIo(1,0,8,1,1000,20000));
             var opioCmdParam = Encoding.UTF8.GetBytes(json);

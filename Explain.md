@@ -52,8 +52,9 @@
 
 	Header: "x-certificate-md5" = "证书Base64前的MD5"
 	{
-		certificate : "",	//客户端请求证书,pkcs#7格式,授权卡读到的密码要能解开这个证书
+		certificate : "",	//客户端请求证书,pkcs#12格式,授权卡读到的密码要能解开这个证书
 					//此处要附上证书的base64后内容，原始内容计算MD5以后设置到header上
+					//如果要使用https通讯，此处的证书作为服务器验证客户端用（双向认证）
 		initSettings :{
 			endpoints : {
 				terminals:{	//同步配置地址，机器会请求该地址更新initSettings
