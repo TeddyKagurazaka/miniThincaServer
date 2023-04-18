@@ -328,7 +328,7 @@ OperateDeviceMessage可以直接操作ResponseDevicesMessage所列举的设备，有时候操作相
 	00 03 -> General Option
 		STATUS: 触发ioEvent，Payload为(00 00 00 00 00 00 00 00)(明文Json)
 
-	00 08 -> Generic NFC RW (操作Aime读卡器)
+	00 08 -> Generic NFC RW (操作Aime读卡器)(该类型包要求省略(Payload长度 + 2)部分，否则读取会错位
 		OPEN_RW: 开启读卡器(Payload为3byte, (00 00)(01:Mifare Only?,08:Felica Only?,09:Both?))
 		CLOSE_RW: 关闭读卡器(不要求Payload)
 		TARGET_DETECT: 检测卡片(Payload 4byte 最长等待时间(毫秒))
