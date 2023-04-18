@@ -8,6 +8,9 @@ internal class Program
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+        string comPort = "COM11";
+        if(args.Length > 0 ) comPort = args[0];
+
         using (var commPort = new SerialPort("COM11")){
             commPort.BaudRate = 115200;
             commPort.Parity = Parity.None;

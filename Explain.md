@@ -95,15 +95,17 @@
 	SERV=http://127.0.0.1/thinca/common-shop/stage2
 	//此时也可将SERV换成COMM，但这样请求的话需要所有的请求包Header都改为0201
 	//游戏以第一个读到的地址为准，同时放置两个无效
-	//这个包需要设置Content-Type : "application/x-tlam" 否则不认
+	//这个包需要设置Content-Type : "application/x-tlam" 否则不认。
 
-客户机请求该地址触发TCAP通讯。<br /><i>所有的TCAP包都要设置 Content-Type : "application/x-tcap" 否则不认。</i>
+客户机请求该地址触发TCAP通讯。
 
 	第一组包必然为Handshake，返回HandshakeAccept包。
 	完成Handshake后，客户机转入Idle状态，此时必然发送空，此时返回OperateDeviceMessage包获取机器参数并设置机器状态。
 	OperateDeviceMessage包必然会有返回，完成所有设置以后即可发送Farewell包完成TCAP通讯。
 
 	注意:只有这里(通过OperateDeviceMessage REQUEST包)可以获得机器参数！
+
+	所有的TCAP包都要设置 Content-Type : "application/x-tcap" 否则不认。
 
 此时机器(通过OperateDeviceMessage REQUEST包)请求的AdditionalSecurity内容
 
@@ -157,7 +159,7 @@
 ## 支付流程
 游戏弹出投币提示后就会开始调用支付流程。<br /><i>如果不跳（比如只让你投币），检查terminals回传的json有没有设置status为10</i>
 
-此时根据选择的Brand类型，游戏开始请求认证时获取的地址(TLAM Metadata 别忘了设置ContentType)，一样先回复TCAP通讯地址。
+此时根据选择的Brand类型，游戏开始请求emlist.jsp时获取的地址(TLAM Metadata 别忘了设置ContentType)，一样先回复TCAP通讯地址。
 
 然后触发TCAP通讯。<b>所有的支付流程都在TCAP层完成然后带Receipt返回游戏，不带Receipt返回只会让游戏重新开始支付流程。</b>
 
@@ -209,10 +211,10 @@ Thinca和SEGAY使用的Brand ID会有一些不同
 	QuicPay	(不支持)	4
 
 ## 关于TCAP包
-TCAP包的格式如下：<br/><i>所有涉及到数字的位置均为大端序 </i>
+TCAP包的格式如下：<br/><b>所有涉及到数字的位置均为大端序 </b>
 
 	(02 05)(类型 1byte)(body的总长度 2byte)(body ?byte)
-	//如果你在TLAM请求时 返回的是COMM而不是SERV，此时包头应改为02 01
+	//如果你在TLAM请求时 返回的是COMM而不是SERV，此时所有请求包头应改为02 01
 
 	可用的类型如下：
 	01 : Handshake
