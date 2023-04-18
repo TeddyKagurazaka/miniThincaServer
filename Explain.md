@@ -87,6 +87,8 @@
 
 如果请求没有问题，客户机会将证书文件以 {terminalId}.p12 格式保存在 AMFS:\\emoney 文件夹下，然后对Thinca层设置证书，并触发 Thinca->initAuth()
 
+<i>Thinca层的https-certificate-pass 固定会为 57291337 (env.json thincapayment.ca_file ("?A<C;==A")  逐位 (0x55 + x - 0x20) % 0x5F + 0x20 得到</i>
+
 <b>注意:所有的Thinca请求 必须通过特制TCAP包通讯才能获得识别机器的参数，其他位置(header body)均无参数。</b>
 
 客户机此时会开始请求 \{commonPrimaryUri\}/initAuth.jsp (TLAM Metadata) <br/> \{commonPrimaryUri\} 为 tfps-res-pro/resource.xml 的 /thincaResource/common/commonPrimaryUri
