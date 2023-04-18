@@ -7,6 +7,9 @@ namespace miniThincaLib
 {
 	public static class Models
     {
+        /// <summary>
+        /// Thinca支持的Brand,可直接作为int Parse
+        /// </summary>
         public enum ThincaBrandType
         {
             Nanaco = 1, //0x2010001,0x1040001,0x2050001,0x3010001
@@ -20,6 +23,9 @@ namespace miniThincaLib
             Sapica = 9
         }
 
+        /// <summary>
+        /// TCAP包类型
+        /// </summary>
         public enum TcapPacketType
         {
             Handshake = 0x01,
@@ -31,7 +37,10 @@ namespace miniThincaLib
             EmptyPacket = 0xFF,
             Unknown = 0x00
         }
-
+        
+        /// <summary>
+        /// TCAP包命令类型
+        /// </summary>
         public enum TcapPacketSubType
         {
             General_UnknownMessage = 0xFF,
@@ -77,6 +86,9 @@ namespace miniThincaLib
             Op_ReqFelicaCloseRw = 0x105
         }
 
+        /// <summary>
+        /// TCAP回复包内容类型
+        /// </summary>
         public enum TcapRespMessageType //(a1+14)
         {
             op00_ResponseFinishedMessage = 0x00,
@@ -95,6 +107,9 @@ namespace miniThincaLib
             Unknown = 0xff
         }
 
+        /// <summary>
+        /// TCAP包结构
+        /// </summary>
         public class TcapPacket
         {
 
@@ -105,7 +120,7 @@ namespace miniThincaLib
             bool Header0201 = false;
             public TcapPacket(TcapPacketType pktType = TcapPacketType.Unknown, bool Use0201 = false) { currentType = pktType; Header0201 = Use0201; }
 
-            public void AddSubType(TcapPacketSubType subType) => subPackets.Add(new TcapSubPacket(subType));
+            //public void AddSubType(TcapPacketSubType subType) => subPackets.Add(new TcapSubPacket(subType));
             public void AddSubType(TcapSubPacket subPacket) => subPackets.Add(subPacket);
 
             public byte[] Generate()
@@ -124,6 +139,9 @@ namespace miniThincaLib
             }
         }
 
+        /// <summary>
+        /// TCAP子包结构，一个TCAP包可以包含任意个同类型子包
+        /// </summary>
         public class TcapSubPacket
         {
             byte[] msgBody;
@@ -152,6 +170,9 @@ namespace miniThincaLib
             }
         }
 
+        /// <summary>
+        /// TCAP请求包内容结构
+        /// </summary>
         public class TcapMessageRequestBody
         {
             public TcapPacketType pktType = TcapPacketType.Unknown;
@@ -166,6 +187,9 @@ namespace miniThincaLib
             }
         }
 
+        /// <summary>
+        /// TCAP请求包结构
+        /// </summary>
         public class TcapMessageRequest
         {
             byte[] data;
@@ -227,6 +251,9 @@ namespace miniThincaLib
             }
         }
 
+        /// <summary>
+        /// 支付成功时返回的账单内容
+        /// </summary>
         public class ReceiptInfo
         {
             public enum receiptTypeEnum : int
@@ -245,6 +272,7 @@ namespace miniThincaLib
             }
 
 
+            //0:付款 5:余额查询
             public string ReceiptType = ((int)receiptTypeEnum.Payment).ToString();
             public long SettledAmount = 100;
             public long Balance = 101;
@@ -252,9 +280,17 @@ namespace miniThincaLib
             public string PaseliDealNo = "1145141919810893";
             public string ApprovalCode = "1";
             public string UpperTerminalId = "11445514";
-            public string DealYMD = DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
+            public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             public string CardNo = "01391144551419198100";
+
+
+            //必须为1才能成功，2好像是错误状态
             public long ReceiptDest = 1;
+
+            public ReceiptInfo(receiptTypeEnum receiptType)
+            {
+                ReceiptType = ((int)receiptType).ToString();
+            }
 
         }
 
@@ -288,18 +324,20 @@ namespace miniThincaLib
                 //00:Authed 10:Available 11:Pause 12:Maintainance 80:NotAvailable 90:Removed
                 public string status = "10";
                 //"111122223333444455556666777788"
-                public string terminalId = "AliceNet_ThincaClient_00000001";
+                public string terminalId = "111122223333444455556666777788";
                 public string version = "2023-01-01T12:34:56";
                 public List<int> availableElectronicMoney = miniThinca.config.availableEMoney;
                 public bool cashAvailability = true;
                 public int productCode = 1001;
                 //public int availableElectronicMoney = 0x5B; //AimePay
 
+                public initSettingClass(string Status) { status = Status; }
+
             }
             public class ActivateClass
             {
                 public string certificate = "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";
-                public initSettingClass initSettings = new initSettingClass();
+                public initSettingClass initSettings = new initSettingClass("00");
 
             }
         }
@@ -434,10 +472,10 @@ namespace miniThincaLib
         {
             public class AdditionalSecurityMessage
             {
-                public string UniqueCode = "ACAE01A9999";
-                public string PassPhrase = "ase114514";
-                public string ServiceBranchNo = "14";
-                public string GoodsCode = "0990";
+                //public string UniqueCode = "ACAE01A9999";
+                //public string PassPhrase = "ase114514";
+                //public string ServiceBranchNo = "14";
+                //public string GoodsCode = "0990";
 
                 public List<int> EMoneyCode = miniThinca.config.availableEMoney;
                 public List<int> EMoneyResultCode = miniThinca.config.availableEMoneyResultCode;
@@ -449,58 +487,43 @@ namespace miniThincaLib
 
             public class AdditionalSecurityMessage_em2
             {
-                public string TermSerial = "ACAE01A9999";
-                public string ServiceBranchNo = "2";
+                //public string TermSerial = "ACAE01A9999";
+                //public string ServiceBranchNo = "2";
 
                 public List<int> EMoneyCode = miniThinca.config.availableEMoney;
-                public List<string> URL = miniThinca.config.availableEMoneyUrl;
+                public List<string> URL = new List<string>();
+
+                public AdditionalSecurityMessage_em2(string termSerial)
+                {
+                    URL = miniThinca.config.ReturnBrandUrl(termSerial);
+                }
             }
 
-            public class AdditionalSecurityMessage_AuthorizeSales
+            public class AdditionalSecurityMessage_AuthorizeSales : ReceiptInfo
             {
-                public string ServiceBranchNo = "2";
-                public string GoodsCode = "0990";
+                //public string ServiceBranchNo = "2";
+                //public string GoodsCode = "0990";
 
-                //0:付款 5:余额查询
-                public string ReceiptType = "0";
-                public long SettledAmount = 100;
-                public long Balance = 101;
+                //public int TotalPointOfPastYear = 100;
+                //public int TotalPointOfPreviousYear = 101;
+                //public int BalanceLimit = 10000;
+                //public int ChargeLimitPerOnce = 10000;
 
-                public string PaseliDealNo = "1145141919810893";
-                public string ApprovalCode = "1";
-                public string UpperTerminalId = "11445514";
-                public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                public string CardNo = "01391144551419198100";
-
-                //必须为1才能成功，2好像是错误状态
-                public int ReceiptDest = 1;
-
-
-                public int TotalPointOfPastYear = 100;
-                public int TotalPointOfPreviousYear = 101;
-                public int BalanceLimit = 10000;
-                public int ChargeLimitPerOnce = 10000;
+                public AdditionalSecurityMessage_AuthorizeSales() : base(receiptTypeEnum.Payment) { }
             }
 
-            public class AdditionalSecurityMessage_BalanceInquiry
+            public class AdditionalSecurityMessage_BalanceInquiry : ReceiptInfo
             {
-                public string ServiceBranchNo = "2";
-                public string GoodsCode = "0990";
-
-                //0:付款 5:余额查询
-                public string ReceiptType = "5";
-                public string UpperTerminalId = "11445514";
-                public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                public long Balance = 101;
-                public string CardNo = "01391144551419198100";
-                //必须为1才能成功，2好像是错误状态
-                public int ReceiptDest = 1;
+                //public string ServiceBranchNo = "2";
+                //public string GoodsCode = "0990";
 
 
-                public int TotalPointOfPastYear = 100;
-                public int TotalPointOfPreviousYear = 101;
-                public int BalanceLimit = 10000;
-                public int ChargeLimitPerOnce = 10000;
+                //public int TotalPointOfPastYear = 100;
+                //public int TotalPointOfPreviousYear = 101;
+                //public int BalanceLimit = 10000;
+                //public int ChargeLimitPerOnce = 10000;
+
+                public AdditionalSecurityMessage_BalanceInquiry() : base(receiptTypeEnum.BalanceInquire) { }
             }
 
             public static string ReturnOperateEntityXml_initAuth(string serviceName, string AdditionalSecurityInformation)

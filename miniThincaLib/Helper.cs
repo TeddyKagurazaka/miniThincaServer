@@ -6,12 +6,22 @@ namespace miniThincaLib.Helper
 {
     public static class Helper
     {
+        /// <summary>
+        /// 返回大端序的数字序列
+        /// </summary>
+        /// <param name="Input">要转换的数字</param>
+        /// <returns></returns>
         public static byte[] returnReversedByte(short Input)
         {
             var output = BitConverter.GetBytes(Input);
             Array.Reverse(output);
             return output;
         }
+        /// <summary>
+        /// 返回大端序的数字序列
+        /// </summary>
+        /// <param name="Input">要转换的数字</param>
+        /// <returns></returns>
         public static byte[] returnReversedByte(int Input)
         {
             var output = BitConverter.GetBytes(Input);
@@ -19,6 +29,13 @@ namespace miniThincaLib.Helper
             return output;
         }
 
+        /// <summary>
+        /// 因为OperateCommand的格式要求很严格，用可以这个直接生成
+        /// </summary>
+        /// <param name="command">命令名</param>
+        /// <param name="opCmdPacket">命令内容</param>
+        /// <param name="rawPacket">无视命令内容长度直接Parse，NFCRW(OPEN_RW那些)包需要</param>
+        /// <returns></returns>
         public static byte[] GenerateOpCmdPacket(byte[] command, byte[] opCmdPacket = null, bool rawPacket = false)
         {
             if (opCmdPacket == null)
@@ -50,6 +67,13 @@ namespace miniThincaLib.Helper
             }
         }
 
+        /// <summary>
+        /// 因为OperateCommand的格式要求很严格，用可以这个直接生成
+        /// </summary>
+        /// <param name="command">命令名</param>
+        /// <param name="opCmdPacket">命令内容</param>
+        /// <param name="rawPacket">无视命令内容长度直接Parse，NFCRW(OPEN_RW那些)包需要</param>
+        /// <returns></returns>
         public static byte[] GenerateOpCmdPacket(string command, byte[] opCmdPacket = null, bool rawPacket = false) => GenerateOpCmdPacket(Encoding.UTF8.GetBytes(command), opCmdPacket, rawPacket);
 
     }
@@ -59,8 +83,8 @@ namespace miniThincaLib.Helper
         private const int AllocateThreshold = 256;
         private const string UpperHexChars = "0123456789ABCDEF";
         private const string LowerhexChars = "0123456789abcdef";
-        private static string[] upperHexBytes;
-        private static string[] lowerHexBytes;
+        private static string[]? upperHexBytes;
+        private static string[]? lowerHexBytes;
 
         public static byte[] StringToByteArray(string hex)
         {

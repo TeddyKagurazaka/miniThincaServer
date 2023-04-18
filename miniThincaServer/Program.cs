@@ -1,6 +1,29 @@
 ﻿using System.Net;
+using System.Net.Sockets;
 
-var miniThincaHandler = new miniThincaLib.miniThinca("192.168.31.201");
+Console.WriteLine("miniThinca Server.");
+
+string ipAddress =  "127.0.0.1";
+if(args.Length > 0)
+{
+    Console.WriteLine("Using ip address:" + ipAddress);
+    ipAddress = args[0];
+}
+else
+{
+    var host = Dns.GetHostEntry(Dns.GetHostName());
+    foreach (var ip in host.AddressList)
+    {
+        if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString().StartsWith("192"))
+        {
+            Console.WriteLine("Using ip address:" + ip.ToString());
+            ipAddress = ip.ToString();
+            break;
+        }
+    }
+}
+
+var miniThincaHandler = new miniThincaLib.miniThinca(ipAddress);
 
 var httpListener = new System.Net.HttpListener();
 httpListener.Prefixes.Add("http://*:80/");
@@ -24,16 +47,17 @@ var ListenerTask = new Task(new Action(() => {
 
                     }, httpListener);
             Result.AsyncWaitHandle.WaitOne();
-        }catch(Exception)
+        }catch(Exception e)
         {
-
+            Console.WriteLine("Exception:" + e.Message);
+            Console.WriteLine(e.StackTrace);
         }
     }
     httpListener.Stop();
 }), TaskCreationOptions.LongRunning);
 
 ListenerTask.Start();
-
+Console.WriteLine("Server online,press esc to exit.");
 while (true)
 {
     switch (Console.ReadKey().Key)

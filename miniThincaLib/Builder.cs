@@ -10,7 +10,10 @@ namespace miniThincaLib
 {
 	public class Builder
 	{
-        public static int AimeCardResultPktCount { get; private set; } = 5;
+        /// <summary>
+        /// 生成能让机台调用Aime读卡器的Tcap包序列
+        /// </summary>
+        /// <returns></returns>
         public static byte[] BuildGetAimeCardResult()
         {
             var json = JsonConvert.SerializeObject(new MessageEventIo(0, 0, 8, 30, 20000)); //-> PASELI支払 カードをタッチしてください
@@ -50,11 +53,16 @@ namespace miniThincaLib
             OperatePkt.AddSubType(detect);
             OperatePkt.AddSubType(RequestCmd);
 
-            AimeCardResultPktCount = OperatePkt.subPackets.Count;
             return OperatePkt.Generate();
         }
 
-        public static int SuccessPaymentResultPktCount { get; private set; } = 2;
+        /// <summary>
+        /// 生成能让机台认为付款成功的Tcap包序列
+        /// </summary>
+        /// <param name="cardNo">卡号</param>
+        /// <param name="seqNumber">顺序号码，机台用于区分支付</param>
+        /// <param name="amount">支付额，固定余额返回支付额+1</param>
+        /// <returns></returns>
         public static byte[] BuildSuccessPaymentResult(string cardNo = "01391144551419198100", string seqNumber = "1", int amount = 100)
         {
 
@@ -94,6 +102,10 @@ namespace miniThincaLib
             return OperatePkt.Generate();
         }
 
+        /// <summary>
+        /// 生成能让机台通过握手的Tcap包序列
+        /// </summary>
+        /// <returns></returns>
         public static byte[] BuildHandshakeResult()
         {
             var HandshakePacket = new TcapPacket(TcapPacketType.Handshake);
@@ -108,6 +120,10 @@ namespace miniThincaLib
             return HandshakePacket.Generate();
         }
 
+        /// <summary>
+        /// 生成能让机台结束Tcap处理流程的Tcap包序列
+        /// </summary>
+        /// <returns></returns>
         public static byte[] BuildFarewellResult()
         {
             var Farewell = new TcapPacket(TcapPacketType.Farewell);
@@ -121,6 +137,25 @@ namespace miniThincaLib
             return Farewell.Generate();
         }
 
+        /// <summary>
+        /// 生成获取机台当前信息的Tcap包序列
+        /// </summary>
+        /// <returns></returns>
+        public static byte[] BuildGetMachineInfoPacket()
+        {
+            var RequestPacket = GenerateOpCmdPacket("REQUEST");
+            var RequestCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, RequestPacket);
+            RequestCmd.setParam(new byte[] { 0x00, 0x01 }); //Generic CLIENT
+
+            var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
+            OperatePkt.AddSubType(RequestCmd);
+            return OperatePkt.Generate();
+        }
+
+        /// <summary>
+        /// 生成能让机台通过initAuth.jsp的Tcap包序列
+        /// </summary>
+        /// <returns></returns>
         public static byte[] BuildInitAuthOperateMsgResult()
         {
             var additionalSecurity = JsonConvert.SerializeObject(new AdditionalSecurityMessage());
@@ -135,9 +170,14 @@ namespace miniThincaLib
             return OperatePkt.Generate();
         }
 
-        public static byte[] BuildInitAuthOperateMsgResult_em2()
+        /// <summary>
+        /// 生成能让机台通过emlist.jsp的Tcap包序列
+        /// </summary>
+        /// <param name="TermSerial">机台序列号，用于下发专用的支付endpoint</param>
+        /// <returns></returns>
+        public static byte[] BuildInitAuthOperateMsgResult_em2(string TermSerial)
         {
-            var additionalSecurity = JsonConvert.SerializeObject(new AdditionalSecurityMessage_em2());
+            var additionalSecurity = JsonConvert.SerializeObject(new AdditionalSecurityMessage_em2(TermSerial));
 
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
             var opCmdParamBytes = new byte[] { 0xEF, 0xBB, 0xBF }.Concat(Encoding.UTF8.GetBytes(ReturnOperateEntityXml_initAuth("DirectIO", additionalSecurity))).ToArray();
