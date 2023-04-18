@@ -68,6 +68,7 @@
 				checkSetting : 3600,	//同步配置间隔(秒)
 				sendStatus : 3600	//上报状态间隔(秒)
 			},
+			//请注意这个地方是settigsType，不是settingsType， segay quality 理解一下
 			settigsType : "AmusementTerminalSettings", //锁死，不能改
 			status : "00",	//结果码，可以使用以下情况
 					//00:完成认证(初始认证时用)
@@ -76,7 +77,7 @@
 					//12:维护
 					//80:暂不可用
 					//90:已撤除(撤除时用)
-			terminalId : "111122223333444455556666777788",	//终端ID，显示在设置菜单，必须为数字
+			terminalId : "111122223333444455556666777788",	//终端ID，显示在设置菜单，必须为30位数字
 			version : "2023-01-01T12:34:56",	//版本号，可以按照这个格式乱改，应该是在statuses回传
 			availableElectronicMoney : [ 8 ],	//可以使用的电子钱包的BrandID，参照下面
 			cashAvailability : true,	//机器能不能接受投币?(不是很懂)
