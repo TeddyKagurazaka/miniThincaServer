@@ -1,29 +1,29 @@
 # miniThincaServer
-ÈÃÄãµÄSEGAY»úÆ÷ÄÜË¢ÉÏPASELI
+è®©ä½ çš„SEGAYæœºå™¨èƒ½åˆ·ä¸ŠPASELI
 
-# Ê¹ÓÃ·½Ê½
-- ~~ÐÞ¸ÄminiThincaServerµÄIP²¢Æô¶¯~~ <br />(ÏÖÔÚËû»á×Ô¶¯ÕÒµçÄÔ192¿ªÍ·µÄÄÚÍøIP£¬»òÕß´ø²ÎÆô¶¯£¬µÚÒ»¸ö²ÎÊý)
+# ä½¿ç”¨æ–¹å¼
+- ~~ä¿®æ”¹miniThincaServerçš„IPå¹¶å¯åŠ¨~~ <br />(çŽ°åœ¨ä»–ä¼šè‡ªåŠ¨æ‰¾ç”µè„‘192å¼€å¤´çš„å†…ç½‘IPï¼Œæˆ–è€…å¸¦å‚å¯åŠ¨ï¼Œç¬¬ä¸€ä¸ªå‚æ•°)
 
-- ÕÒÒ»ÕÅMifare¿¨£¬Ð´ÈëthincaMod4.mct (MiFare Classic Tool)
+- æ‰¾ä¸€å¼ Mifareå¡ï¼Œå†™å…¥thincaMod4.mct (MiFare Classic Tool)
 
-- ÐÞ¸Äenv.jsonµÄroot_endpoint£¬½«µØÖ·Ö¸Ïò http://ÄãµÄIPµØÖ·/thinca
+- ä¿®æ”¹env.jsonçš„root_endpointï¼Œå°†åœ°å€æŒ‡å‘ http://ä½ çš„IPåœ°å€/thinca
 
-- ÐÞ¸Äresource.xmlµÄ /thincaResource/common/commonPrimaryUri£¬½«µØÖ·Ö¸Ïò http://ÄãµÄIPµØÖ·/thinca/common-shop/
+- ä¿®æ”¹resource.xmlçš„ /thincaResource/common/commonPrimaryUriï¼Œå°†åœ°å€æŒ‡å‘ http://ä½ çš„IPåœ°å€/thinca/common-shop/
 
-- (¿ÉÑ¡) Èç¹ûÄãÈ±ÉÙvfd£¬Ê¹ÓÃUSB×ªCOMÁ¬½Ó»úÌ¨µÄCOM2ºó£¬´ò¿ªvfdEmu
+- (å¯é€‰) å¦‚æžœä½ ç¼ºå°‘vfdï¼Œä½¿ç”¨USBè½¬COMè¿žæŽ¥æœºå°çš„COM2åŽï¼Œæ‰“å¼€vfdEmu
 
-- Æô¶¯ÓÎÏ·
+- å¯åŠ¨æ¸¸æˆ
 
-# ²»ÄÜÓÃÔõÃ´°ì
-- ÓÎÏ·-µç×ÓÖ§¸¶ÐÅÏ¢-»úÌ¨ÈÏÖ¤-¿ªÊ¼ÈÏÖ¤<br />
-Èç¹ûAime¶Á¿¨Æ÷Ã»ÓÐÉÁË¸À¶µÆ£¬¼ì²éVFDÁ¬½Ó£¨×ª½ÓÏßÒªÇóÖ§³ÖÓ²¼þÁ÷¿Ø(DTS/RTS)£©<br />
-<i>Èç¹ûÊµÔÚÀÁµÃ¶¯/Ã»¶«Î÷£¬¿ÉÒÔ±¬¸ÄamDaemon.exeÌø¹ývfd¼ì²â£¬×Ö·û´®ËÑË÷ampdGd1232a01aInit()</i>
+# ä¸èƒ½ç”¨æ€Žä¹ˆåŠž
+- æ¸¸æˆ-ç”µå­æ”¯ä»˜ä¿¡æ¯-æœºå°è®¤è¯-å¼€å§‹è®¤è¯<br />
+å¦‚æžœAimeè¯»å¡å™¨æ²¡æœ‰é—ªçƒè“ç¯ï¼Œæ£€æŸ¥VFDè¿žæŽ¥ï¼ˆè½¬æŽ¥çº¿è¦æ±‚æ”¯æŒç¡¬ä»¶æµæŽ§(DTS/RTS)ï¼‰<br />
+<i>å¦‚æžœå®žåœ¨æ‡’å¾—åŠ¨/æ²¡ä¸œè¥¿ï¼Œå¯ä»¥çˆ†æ”¹amDaemon.exeè·³è¿‡vfdæ£€æµ‹ï¼Œå­—ç¬¦ä¸²æœç´¢ampdGd1232a01aInit()</i>
 
-- ÉÁÀ¶µÆÖ®ºóÎÞ·¨¶Á¿¨<br />
-ÐèÒª¶Á×¨ÃÅµÄÊÚÈ¨¿¨£¬ÓÃÒ»¸öÃÅ¿¨Ð´ÈëthincaMod4.mct
+- é—ªè“ç¯ä¹‹åŽæ— æ³•è¯»å¡<br />
+éœ€è¦è¯»ä¸“é—¨çš„æŽˆæƒå¡ï¼Œç”¨ä¸€ä¸ªé—¨å¡å†™å…¥thincaMod4.mct
 
-- »úÆ÷½ÐÁË¼¸ÉùÈ»ºó×´Ì¬ÏÔÊ¾Error<br />
-·þÎñÆ÷Ã»Í¨£¬¼ì²éÅäÖÃÎÄ¼þ<br />
+- æœºå™¨å«äº†å‡ å£°ç„¶åŽçŠ¶æ€æ˜¾ç¤ºError<br />
+æœåŠ¡å™¨æ²¡é€šï¼Œæ£€æŸ¥é…ç½®æ–‡ä»¶<br />
 
-# ÏëÕûµã»¨»îÔõÃ´°ì
-[ÕâÀï¾¡¿ÉÄÜ¸øÄã½âÊÍ»¨»î](Explain.md)
+# æƒ³æ•´ç‚¹èŠ±æ´»æ€Žä¹ˆåŠž
+[è¿™é‡Œå°½å¯èƒ½ç»™ä½ è§£é‡ŠèŠ±æ´»](Explain.md)
