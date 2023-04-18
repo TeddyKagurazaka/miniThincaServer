@@ -1,9 +1,9 @@
 ﻿using System.Net;
 
-var miniThincaHandler = new miniThincaLib.miniThinca();
+var miniThincaHandler = new miniThincaLib.miniThinca("192.168.31.201");
 
 var httpListener = new System.Net.HttpListener();
-httpListener.Prefixes.Add("http://*:8088/");
+httpListener.Prefixes.Add("http://*:80/");
 bool Running = true;
 
 var ListenerTask = new Task(new Action(() => {

@@ -1,8 +1,58 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace miniThincaLib.Helper
 {
+    public static class Helper
+    {
+        public static byte[] returnReversedByte(short Input)
+        {
+            var output = BitConverter.GetBytes(Input);
+            Array.Reverse(output);
+            return output;
+        }
+        public static byte[] returnReversedByte(int Input)
+        {
+            var output = BitConverter.GetBytes(Input);
+            Array.Reverse(output);
+            return output;
+        }
+
+        public static byte[] GenerateOpCmdPacket(byte[] command, byte[] opCmdPacket = null, bool rawPacket = false)
+        {
+            if (opCmdPacket == null)
+            {
+                return new byte[] { (byte)command.Length }
+                    .Concat(command)
+                    .Concat(new byte[] { 0x00, 0x00 })
+                    .Concat(new byte[] { 0x00, 0x00 })
+                    .ToArray();
+            }
+            else if (rawPacket == true)
+            {
+                return new byte[] { (byte)command.Length }
+                    .Concat(command)
+                    .Concat(new byte[] { 0x00, 0x00 })
+                    .Concat(returnReversedByte((short)(opCmdPacket.Length)))
+                    .Concat(opCmdPacket)
+                    .ToArray();
+            }
+            else
+            {
+                return new byte[] { (byte)command.Length }
+                    .Concat(command)
+                    .Concat(new byte[] { 0x00, 0x00 })
+                    .Concat(returnReversedByte((short)(opCmdPacket.Length + 2)))
+                    .Concat(returnReversedByte((short)(opCmdPacket.Length)))
+                    .Concat(opCmdPacket)
+                    .ToArray();
+            }
+        }
+
+        public static byte[] GenerateOpCmdPacket(string command, byte[] opCmdPacket = null, bool rawPacket = false) => GenerateOpCmdPacket(Encoding.UTF8.GetBytes(command), opCmdPacket, rawPacket);
+
+    }
     public static class HexByteArrayExtensionMethods
     {
 

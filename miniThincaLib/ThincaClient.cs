@@ -452,6 +452,7 @@ namespace AliceNet_Core_Redesigned.Module
             public long ReceiptDest = 1;
 
         }
+
         public class AdditionalSecurityMessage
         {
             ////type 1=bool 2=str 3=int 0=null
@@ -1291,7 +1292,7 @@ namespace AliceNet_Core_Redesigned.Module
         //{
         //    public int UpperTerminalId = 100;
         //    public int EMoneyCode = 100;
-        //    public int EMoneyResultCode = 100;
+        //    public int EMoneyResulode = 100;
         //}
 
         public string ReturnOperateEntityXml(string serviceName, string AdditionalSecurityInformation)
