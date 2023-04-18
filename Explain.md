@@ -15,8 +15,8 @@
 	其中包含以下内容：
 		storeCardId(offset+0 16byte 明文)
 		merchantCode(offset+16 20byte 明文)
-		storeBranchNumber(offset+36 5byte 明文)
-		证书密码(offset+41 16byte passphrase开头的明文)
+		storeBranchNumber(offset+36 读12byte取前5byte 明文)
+		证书密码(offset+41 16byte 明文)
 		之后填充00到128 byte
 
 	这一块内容会进行加密：
@@ -33,8 +33,8 @@
 
 	storeCardId:1144551419198100
 	merchantCode:11451419191145141919
-	storeBranchNumber:11514
-	证书密码:passphrase114514
+	storeBranchNumber:11514(只取前5位)
+	证书密码:ase114514
 	不包含Proxy设置
 
 完成读卡以后，机器会将参数发往 tfps-res-pro/env.json 的 tasms.root_endpoint。如果你有改env.json的话服务器这时候就会有请求了。请求的内容如下：
