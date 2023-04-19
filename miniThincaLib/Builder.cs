@@ -8,110 +8,237 @@ using static miniThincaLib.Helper.Helper;
 
 namespace miniThincaLib
 {
+    /// <summary>
+    /// 构建TCAP包序列的类
+    /// </summary>
 	public class Builder
 	{
         /// <summary>
-        /// 生成能让机台调用Aime读卡器的Tcap包序列
+        /// 此处有确定能用的基础包，来回拼凑一下就能用了
         /// </summary>
-        /// <returns></returns>
-        public static byte[] BuildGetAimeCardResult()
+        public class BasicBuilder
         {
-            var json = JsonConvert.SerializeObject(new MessageEventIo(0, 0, 8, 30, 20000)); //-> PASELI支払 カードをタッチしてください
-            var PaseliMsgParam = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }.Concat(Encoding.UTF8.GetBytes(json)).ToArray();
-            var PaseliCmdPacket = GenerateOpCmdPacket("STATUS", opCmdPacket: PaseliMsgParam);
-            var PaseliMessageCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, PaseliCmdPacket);
-            PaseliMessageCmd.setParam(new byte[] { 0x00, 0x03 }); //Generic OPTION
+            /// <summary>
+            /// 在VFD上显示指定信息
+            /// </summary>
+            /// <param name="BrandType">钱包Brand(对应resource.xml)</param>
+            /// <param name="MessageID">信息ID(对应resource.xml)</param>
+            /// <returns></returns>
+            public static TcapSubPacket ShowMessage(byte BrandType, byte MessageID)
+            {
+                var json = JsonConvert.SerializeObject(new MessageEventIo(0, 0, BrandType, MessageID, 20000)); //-> PASELI支払 カードをタッチしてください
+                var PaseliMsgParam = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }.Concat(Encoding.UTF8.GetBytes(json)).ToArray();
+                var PaseliCmdPacket = GenerateOpCmdPacket("STATUS", opCmdPacket: PaseliMsgParam);
+                var PaseliMessageCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, PaseliCmdPacket);
+                PaseliMessageCmd.setParam(new byte[] { 0x00, 0x03 });
+
+                return PaseliMessageCmd;
+            }
+
+            /// <summary>
+            /// Aime支持的LED颜色
+            /// </summary>
+            public enum LEDColor
+            {
+                Red = 1,
+                Green = 2,
+                Blue = 3,
+                White = 4
+            }
+            /// <summary>
+            /// Aime支持的灯光模式
+            /// </summary>
+            public enum LEDMode
+            {
+                Static = 0,
+                Off = 1,
+                Blink = 2
+            }
+            /// <summary>
+            /// 控制Aime LED
+            /// </summary>
+            /// <param name="Mode">灯光模式</param>
+            /// <param name="Color">颜色</param>
+            /// <param name="Duration">总亮灯时长(毫秒)(闪烁，亮灯时有效)</param>
+            /// <param name="OnDuration">开灯时长(毫秒)(闪烁时有效)</param>
+            /// <param name="OffDuration">关灯时长(毫秒)(闪烁时有效)</param>
+            /// <returns></returns>
+            public static TcapSubPacket OperateLED(LEDMode Mode, LEDColor Color, short Duration = 0, short OnDuration = 0, short OffDuration = 0)
+            {
+                //LedCmd (00)(00)(a2 == 03)(a3 == 0,1,2,3)(a4 == 1,2)(byteLength)(2byte)(2byte)(2byte)(2byte)
+                //a3 = 03 a4 = 01
+                var DurationByte = returnReversedByte(Duration);
+                var OnDurationByte = returnReversedByte(OnDuration);
+                var OffDurationByte = returnReversedByte(OffDuration);
 
 
-            //LedCmd (00)(00)(a2 == 03)(a3 == 0,1,2,3)(a4 == 1,2)(byteLength)(2byte)(2byte)(2byte)(2byte)
-            //a3 = 03 a4 = 01
-            
-            var ledCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg,
-                   GenerateOpCmdPacket(new byte[]{ 0x31 },new byte[] {
+                var ledCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg,
+                       GenerateOpCmdPacket(new byte[] { 0x31 }, new byte[] {
                        0x00,0x00,
                        0x03,        //a2 必须为0x03
-                       0x03,        //a3 可以设置为0(红色),1(绿色),2(蓝色),3(白色)
-                       0x02,        //a4 可以设置为0,1,2
+                       (byte)Color,        //a3 可以设置为0(红色),1(绿色),2(蓝色),3(白色)
+                       (byte)Mode,        //a4 可以设置为0,1,2
                                     //  0的时候只读取a5[1],长度要求4  (常亮)
                                     //  1的时候关闭
                                     //  2的时候读取a5[1:3],长度要求8 （闪烁)
                        0x00,0x08,   //后面部分长度
                        0x00,0x00,   //a5 无视
-                       0x13,0x88,   //a5[1] 亮灯时间(5s)
-                       0x01,0xf4,   //a5[2] 开灯时间(msec)
-                       0x01,0xf4    //a5[3] 关灯时间(msec)
-                   },true)
-                );
-            ledCommand.setParam(new byte[] { 0x00, 0x05 });
+                       DurationByte[0],DurationByte[1],   //a5[1] 亮灯时间(5s)
+                       OnDurationByte[0],OnDurationByte[1],   //a5[2] 开灯时间(msec)
+                       OffDurationByte[0],OffDurationByte[1]    //a5[3] 关灯时间(msec)
+                       }, true)
+                    );
+                ledCommand.setParam(new byte[] { 0x00, 0x05 });
 
-            var openRwPacket = GenerateOpCmdPacket("OPEN_RW", new byte[] { 0x00, 0x00, 0x09 }, true); //(code1)(2byte code2) (code1==0)(code2 = 1(mifare only?),8(felica only?),9(both?))
-                                                                                                      //9 AND 1 = 1
-                                                                                                      //9 >> 2 = 2
-                                                                                                      //-> 1 = 1,8 = 2,9 = 3
+                return ledCommand;
+            }
 
-            var openRw = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, openRwPacket);
-            openRw.setParam(new byte[] { 0x00, 0x08 }); //GENERIC NFCRW
+            /// <summary>
+            /// Aime读卡器支持的卡片类型
+            /// </summary>
+            public enum AimeReaderCardType
+            {
+                Mifare = 1,
+                Felica = 8,
+                Both = 9
+            }
 
-            //(他会在这个包塞死 所以回传的时候要么没数据要么带卡号)
-            var detectPacket = GenerateOpCmdPacket("TARGET_DETECT", opCmdPacket: new byte[] { 0x00, 0x00, 0x13, 0x88 }, true);   //(00 00)(2byte timeout millsec)
-            var detect = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, detectPacket);
-            detect.setParam(new byte[] { 0x00, 0x08 }); //GENERIC NFCRW
+            /// <summary>
+            /// 开启Aime读卡器
+            /// </summary>
+            /// <param name="detectType">检测的卡片类型</param>
+            /// <returns></returns>
+            public static TcapSubPacket OpenAimeReader(AimeReaderCardType detectType = AimeReaderCardType.Mifare | AimeReaderCardType.Felica)
+            {
+                var openRwPacket = GenerateOpCmdPacket("OPEN_RW", new byte[] { 0x00, 0x00, (byte)detectType }, true); 
 
+                var openRw = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, openRwPacket);
+                openRw.setParam(new byte[] { 0x00, 0x08 }); //GENERIC NFCRW
 
-            var RequestPacket = GenerateOpCmdPacket("REQUEST");
-            var RequestCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, RequestPacket);
-            RequestCmd.setParam(new byte[] { 0x00, 0x01 }); //Generic CLIENT
+                return openRw;
+            }
 
+            /// <summary>
+            /// 开始检测读卡（会塞死）直到读到卡片或超时
+            /// </summary>
+            /// <param name="TimeoutMsec">超时时间(毫秒)</param>
+            /// <returns></returns>
+            public static TcapSubPacket DetectAimeCard(short TimeoutMsec)
+            {
+                var timeoutByte = returnReversedByte(TimeoutMsec);
+
+                //(他会在这个包塞死 所以回传的时候要么没数据要么带卡号)
+                var detectPacket = GenerateOpCmdPacket("TARGET_DETECT", opCmdPacket: new byte[] { 0x00, 0x00, timeoutByte[0], timeoutByte[1] }, true);   //(00 00)(2byte timeout millsec)
+                var detect = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, detectPacket);
+                detect.setParam(new byte[] { 0x00, 0x08 }); //GENERIC NFCRW
+
+                return detect;
+            }
+
+            /// <summary>
+            /// 关闭Aime读卡器
+            /// </summary>
+            /// <returns></returns>
+            public static TcapSubPacket CloseAimeReader()
+            {
+                var openRwPacket = GenerateOpCmdPacket("CLOSE_RW", new byte[] { 0x00, 0x00 }, true);
+
+                var openRw = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, openRwPacket);
+                openRw.setParam(new byte[] { 0x00, 0x08 }); //GENERIC NFCRW
+
+                return openRw;
+            }
+
+            /// <summary>
+            /// 让机台返回基础信息
+            /// </summary>
+            /// <returns></returns>
+            public static TcapSubPacket RequestOperateXml()
+            {
+                var RequestPacket = GenerateOpCmdPacket("REQUEST");
+                var RequestCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, RequestPacket);
+                RequestCmd.setParam(new byte[] { 0x00, 0x01 }); //Generic CLIENT
+
+                return RequestCmd;
+            }
+
+            /// <summary>
+            /// 播放声音
+            /// </summary>
+            /// <param name="brandType">钱包Brand</param>
+            /// <param name="soundID">声音ID(一般0是成功 1是失败)</param>
+            /// <returns></returns>
+            public static TcapSubPacket PlaySound(byte brandType,byte soundID = 0)
+            {
+                var json = JsonConvert.SerializeObject(new SoundEventIo(0, brandType, soundID, 20000)); //-> paseli//
+                var opioCmdParam = Encoding.UTF8.GetBytes(json);
+                opioCmdParam = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }.Concat(opioCmdParam).ToArray();
+                var opCmdPacket = GenerateOpCmdPacket("STATUS", opCmdPacket: opioCmdParam);
+                var opCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, opCmdPacket);
+                opCommand.setParam(new byte[] { 0x00, 0x03 });
+
+                return opCommand;
+            }
+
+            /// <summary>
+            /// 设定机台的基础信息
+            /// </summary>
+            /// <param name="operateXml">ReturnOperateEntityXml()</param>
+            /// <returns></returns>
+            public static TcapSubPacket UpdateOperateXml(string operateXml)
+            {
+                var CurrentBody = GenerateOpCmdPacket("CURRENT", opCmdPacket: Encoding.UTF8.GetBytes(operateXml));
+                var CurrentPacket = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, CurrentBody);
+                CurrentPacket.setParam(new byte[] { 0x00, 0x01 });
+
+                return CurrentPacket;
+            }
+
+            /// <summary>
+            /// 设定机台的基础信息，但是有时候机台会对基础信息的包头检测(一般是DirectIO 注册机台时)，用这个直接传附带包头的版本
+            /// </summary>
+            /// <param name="operateXmlByte">附带上包头的ReturnOperateEntityXml()</param>
+            /// <returns></returns>
+            public static TcapSubPacket UpdateOperateXml(byte[] operateXmlByte)
+            {
+                var CurrentBody = GenerateOpCmdPacket("CURRENT", opCmdPacket: operateXmlByte);
+                var CurrentPacket = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, CurrentBody);
+                CurrentPacket.setParam(new byte[] { 0x00, 0x01 });
+
+                return CurrentPacket;
+            }
+        }
+
+        /// <summary>
+        /// 生成能让机台调用Aime读卡器的Tcap包序列(显示刷卡提示,闪烁白灯,打开读卡器并开始检测卡片,返回机台基础信息)
+        /// </summary>
+        /// <returns></returns>
+        public static byte[] BuildGetAimeCardResult(byte brandType,byte messageId)
+        {
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
-            OperatePkt.AddSubType(PaseliMessageCmd);
-            OperatePkt.AddSubType(ledCommand);
-            OperatePkt.AddSubType(openRw);
-            OperatePkt.AddSubType(detect);
-            OperatePkt.AddSubType(RequestCmd);
+            //显示信息
+            OperatePkt.AddSubType(BasicBuilder.ShowMessage(brandType, messageId));
+            //读卡器闪烁白灯 时长5秒 开0.5秒关0.5秒
+            OperatePkt.AddSubType(BasicBuilder.OperateLED(BasicBuilder.LEDMode.Blink, BasicBuilder.LEDColor.White, 5000,500,500));
+            //打开读卡器
+            OperatePkt.AddSubType(BasicBuilder.OpenAimeReader());
+            //5秒内检测读到的卡片
+            OperatePkt.AddSubType(BasicBuilder.DetectAimeCard(5000));
+            //返回机台信息
+            OperatePkt.AddSubType(BasicBuilder.RequestOperateXml());
 
             return OperatePkt.Generate();
         }
 
         /// <summary>
-        /// 生成能让机台认为付款成功的Tcap包序列
+        /// 生成能让机台认为付款成功的Tcap包序列(播放成功音,LED亮绿灯,更新机台Xml)
         /// </summary>
         /// <param name="cardNo">卡号</param>
         /// <param name="seqNumber">顺序号码，机台用于区分支付</param>
         /// <param name="amount">支付额，固定余额返回支付额+1</param>
         /// <returns></returns>
-        public static byte[] BuildSuccessPaymentResult(string cardNo = "01391144551419198100", string seqNumber = "1", int amount = 100, short brandType = 8)
+        public static byte[] BuildSuccessPaymentResult(byte brandType = 8, int amount = 100, string cardNo = "01391144551419198100", string seqNumber = "1")
         {
-
-            //var json = JsonConvert.SerializeObject(new MessageEventIo(0,0,8,30,20000)); -> PASELI支払 カードをタッチしてください
-            var json = JsonConvert.SerializeObject(new SoundEventIo(0, brandType, 0, 20000)); //-> paseli//
-                                                                                      //var json = JsonConvert.SerializeObject(new LedEventIo(0,0,20000,127,127,127)); // -> ?
-                                                                                      //var json = JsonConvert.SerializeObject(new AmountEventIo(1,0,8,1,1000,20000));
-            var opioCmdParam = Encoding.UTF8.GetBytes(json);
-            opioCmdParam = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }.Concat(opioCmdParam).ToArray();
-            var opCmdPacket = GenerateOpCmdPacket("STATUS", opCmdPacket: opioCmdParam);
-            var opCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, opCmdPacket);
-            opCommand.setParam(new byte[] { 0x00, 0x03 });
-
-            var ledCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg,
-                   GenerateOpCmdPacket(new byte[] { 0x31 }, new byte[] {
-                       0x00,0x00,
-                       0x03,        //a2 必须为0x03
-                       0x01,        //a3 可以设置为0(红色),1(绿色),2(蓝色),3(白色)
-                       0x00,        //a4 可以设置为0,1,2
-                                    //  0的时候只读取a5[1],长度要求4  (常亮)
-                                    //  1的时候关闭
-                                    //  2的时候读取a5[1:3],长度要求8 （闪烁)
-                       0x00,0x08,   //后面部分长度
-                       0x00,0x00,   //a5 无视
-                       0x13,0x88,   //a5[1] 亮灯时间(5s)
-                       0x01,0xf4,   //a5[2] 开灯时间(msec)
-                       0x01,0xf4    //a5[3] 关灯时间(msec)
-                   }, true)
-                );
-            ledCommand.setParam(new byte[] { 0x00, 0x05 });
-
-
-
             //发送支付成功状态回服务器
             var returnSalesJson = new AdditionalSecurityMessage_AuthorizeSales();
             returnSalesJson.CardNo = cardNo;
@@ -127,19 +254,18 @@ namespace miniThincaLib
                 setAmount: amount.ToString(),
                 account: cardNo);
 
-            var CurrentBody = GenerateOpCmdPacket("CURRENT", opCmdPacket: Encoding.UTF8.GetBytes(paymentXml));
-            var CurrentPacket = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, CurrentBody);
-            CurrentPacket.setParam(new byte[] { 0x00, 0x01 });
-
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
-            OperatePkt.AddSubType(opCommand);
-            OperatePkt.AddSubType(ledCommand);
-            OperatePkt.AddSubType(CurrentPacket);
+            //播放刷卡成功音
+            OperatePkt.AddSubType(BasicBuilder.PlaySound(brandType));
+            //LED常量绿灯 5秒
+            OperatePkt.AddSubType(BasicBuilder.OperateLED(BasicBuilder.LEDMode.Static, BasicBuilder.LEDColor.Green,5000));
+            //更新机台的OperateXml，内含账单
+            OperatePkt.AddSubType(BasicBuilder.UpdateOperateXml(paymentXml));
             return OperatePkt.Generate();
         }
 
         /// <summary>
-        /// 生成能让机台通过握手的Tcap包序列
+        /// 生成能让机台通过握手的Tcap包序列(固定流程,不用管)
         /// </summary>
         /// <returns></returns>
         public static byte[] BuildHandshakeResult()
@@ -157,7 +283,7 @@ namespace miniThincaLib
         }
 
         /// <summary>
-        /// 生成能让机台结束Tcap处理流程的Tcap包序列
+        /// 生成能让机台结束Tcap处理流程的Tcap包序列(固定流程,不用管)
         /// </summary>
         /// <returns></returns>
         public static byte[] BuildFarewellResult()
@@ -179,12 +305,8 @@ namespace miniThincaLib
         /// <returns></returns>
         public static byte[] BuildGetMachineInfoPacket()
         {
-            var RequestPacket = GenerateOpCmdPacket("REQUEST");
-            var RequestCmd = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, RequestPacket);
-            RequestCmd.setParam(new byte[] { 0x00, 0x01 }); //Generic CLIENT
-
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
-            OperatePkt.AddSubType(RequestCmd);
+            OperatePkt.AddSubType(BasicBuilder.RequestOperateXml());
             return OperatePkt.Generate();
         }
 
@@ -195,13 +317,9 @@ namespace miniThincaLib
         public static byte[] BuildInitAuthOperateMsgResult()
         {
             var additionalSecurity = JsonConvert.SerializeObject(new AdditionalSecurityMessage());
-
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
             var opCmdParamBytes = new byte[] { 0xEF, 0xBB, 0xBF }.Concat(Encoding.UTF8.GetBytes(ReturnOperateEntityXml_initAuth("DirectIO", additionalSecurity))).ToArray();
-            var opCmdPacket = GenerateOpCmdPacket("CURRENT", opCmdParamBytes);
-            var opCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, opCmdPacket);
-            opCommand.setParam(new byte[] { 0x00, 0x01 }); //必须0x01 否则4002144
-            OperatePkt.AddSubType(opCommand);
+            OperatePkt.AddSubType(BasicBuilder.UpdateOperateXml(opCmdParamBytes));
 
             return OperatePkt.Generate();
         }
@@ -217,10 +335,7 @@ namespace miniThincaLib
 
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
             var opCmdParamBytes = new byte[] { 0xEF, 0xBB, 0xBF }.Concat(Encoding.UTF8.GetBytes(ReturnOperateEntityXml_initAuth("DirectIO", additionalSecurity))).ToArray();
-            var opCmdPacket = GenerateOpCmdPacket("CURRENT", opCmdParamBytes);
-            var opCommand = new TcapSubPacket(TcapPacketSubType.op25_FarewellReturnCode_OpOperateDeviceMsg, opCmdPacket);
-            opCommand.setParam(new byte[] { 0x00, 0x01 }); //必须0x01 否则4002144
-            OperatePkt.AddSubType(opCommand);
+            OperatePkt.AddSubType(BasicBuilder.UpdateOperateXml(opCmdParamBytes));
 
             return OperatePkt.Generate();
         }

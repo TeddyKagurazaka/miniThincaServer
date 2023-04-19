@@ -67,11 +67,10 @@ namespace miniThincaLib
 						case TcapRequestType.emStage2:  //认证的时候先获取机器信息（需要序列号）
 							return Builder.BuildGetMachineInfoPacket();
 						case TcapRequestType.AuthorizeSales:    //付款的时候先打开Aime读卡器
-                            if(string.IsNullOrEmpty(termSerial)) Builder.BuildFarewellResult();
+                            if(string.IsNullOrEmpty(termSerial)) Builder.BuildFarewellResult(); //这时候是肯定有termSerial的(因为emStage2),没有就跳
 
-                            //这时候是肯定有termSerial的(因为emStage2)
                             machineInfo.Add(termSerial, new MachineInfo(TcapRequestType.AuthorizeSales, MachineState.RequestOp_InitCardSwipe));
-							return Builder.BuildGetAimeCardResult();
+							return Builder.BuildGetAimeCardResult(brandType:8,messageId:30);
 						default:                        //其他未知方法直接送走
                             return Builder.BuildFarewellResult();
                     }
@@ -128,14 +127,14 @@ namespace miniThincaLib
                     var nsmgr = new XmlNamespaceManager(reqXml.NameTable);
                     nsmgr.AddNamespace("ICAS", "http://www.hp.com/jp/FeliCa/ICASClient");
                     var PaymentMedia = (reqXml.SelectSingleNode("//ICAS:longValue[@name='PaymentMedia']", nsmgr) as XmlElement).GetAttribute("value");
-                    var BrandInt = short.Parse(PaymentMedia);
+                    var BrandInt = byte.Parse(PaymentMedia);
 
                     var SequenceNumber = (reqXml.SelectSingleNode("//ICAS:longValue[@name='SequenceNumber']", nsmgr) as XmlElement).GetAttribute("value");
                     var Amount = (reqXml.SelectSingleNode("//ICAS:currencyValue[@name='Amount']", nsmgr) as XmlElement).GetAttribute("value");
                     var AmountInt = int.Parse(Amount);
 
                     currentInfo.state = MachineState.RequestOp_SuccessPayment;
-                    return Builder.BuildSuccessPaymentResult(cardId, SequenceNumber, AmountInt,BrandInt);
+                    return Builder.BuildSuccessPaymentResult(cardNo:cardId,seqNumber:SequenceNumber, amount:AmountInt,brandType:BrandInt);
                 }
                 else if((currentInfo.lastRequest - currentInfo.firstRequest).TotalSeconds >= 30)
                 {
@@ -156,7 +155,7 @@ namespace miniThincaLib
             else
             {
                 currentInfo.state = MachineState.RequestOp_InitCardSwipe;
-                return Builder.BuildGetAimeCardResult();
+                return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30);
             }
 
         }
@@ -170,14 +169,12 @@ namespace miniThincaLib
                     var RequestPkt = request.messages[0].MessageBody;
                     byte[] reqXmlStr = new byte[RequestPkt.Length - 6];
                     Array.Copy(RequestPkt, 6, reqXmlStr, 0, RequestPkt.Length - 6);
-                    //var reqXmlStr = RequestPkt.SubArray(6, RequestPkt.Length - 6);
+
                     var reqXml = new XmlDocument();
                     reqXml.LoadXml(Encoding.UTF8.GetString(reqXmlStr));
 
                     var nsmgr = new XmlNamespaceManager(reqXml.NameTable);
                     nsmgr.AddNamespace("ICAS", "http://www.hp.com/jp/FeliCa/ICASClient");
-
-                    //Newtonsoft.Json.JsonConvert.DeserializeXmlNode("{\"Root\":" + (reqXml.SelectSingleNode("//ICAS:stringValue[@name='AdditionalSecurityInformation']", nsmgr) as XmlElement).GetAttribute("value") + "}")
 
                     var securityInformation = Newtonsoft.Json.JsonConvert.DeserializeXmlNode(
                             "{\"Root\":" +
@@ -195,15 +192,7 @@ namespace miniThincaLib
                             .SelectSingleNode("/Root/UniqueCode")
                             .InnerText;
 
-                    //var additionalSecurity = (reqXml.SelectSingleNode("//ICAS:stringValue[@name='pString']", nsmgr) as XmlElement).GetAttribute("value");
-                    //Dictionary<string, string> parsedSecurity = new Dictionary<string, string>();
-                    //foreach (var securityData in additionalSecurity.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                    //{
-                    //    var kvPair = securityData.Split('=');
-                    //    parsedSecurity[kvPair[0]] = kvPair[1];
-                    //}
-                    //stage2: UniqueCode=ACAE01A9999
-                    //emstage2: TermSerial=ACAE01A9999
+                    if(string.IsNullOrEmpty(serial)) return Builder.BuildGetMachineInfoPacket();    //没拿到包?
 
                     if (emStage2) { return Builder.BuildInitAuthOperateMsgResult_em2(serial); }
                     else return Builder.BuildInitAuthOperateMsgResult();
