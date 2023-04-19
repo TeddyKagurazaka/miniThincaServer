@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Text;
 using static miniThincaLib.Models.SecurityMessage;
 using static miniThincaLib.Models.ClientIoOperation;
@@ -40,10 +39,10 @@ namespace miniThincaLib
             /// </summary>
             public enum LEDColor
             {
-                Red = 1,
-                Green = 2,
-                Blue = 3,
-                White = 4
+                Red = 0,
+                Green = 1,
+                Blue = 2,
+                White = 3
             }
             /// <summary>
             /// Aime支持的灯光模式
@@ -237,15 +236,10 @@ namespace miniThincaLib
         /// <param name="seqNumber">顺序号码，机台用于区分支付</param>
         /// <param name="amount">支付额，固定余额返回支付额+1</param>
         /// <returns></returns>
-        public static byte[] BuildSuccessPaymentResult(byte brandType = 8, int amount = 100, string cardNo = "01391144551419198100", string seqNumber = "1")
+        public static byte[] BuildSuccessPaymentResult(byte brandType, int amount = 100, string cardNo = "01391144551419198100", string seqNumber = "1")
         {
             //发送支付成功状态回服务器
-            var returnSalesJson = new AdditionalSecurityMessage_AuthorizeSales();
-            returnSalesJson.CardNo = cardNo;
-            returnSalesJson.SettledAmount = amount;
-            returnSalesJson.Balance = amount + 1;
-
-            string paymentPacket = JsonConvert.SerializeObject(returnSalesJson);
+            string paymentPacket = BuildPaymentJsonByBrandType(brandType, amount,cardNo);
             string paymentXml = ReturnOperateEntityXml_AuthorizeSales(
                 serviceName: "AuthorizeSales",
                 AdditionalSecurityInformation: paymentPacket,
@@ -262,6 +256,33 @@ namespace miniThincaLib
             //更新机台的OperateXml，内含账单
             OperatePkt.AddSubType(BasicBuilder.UpdateOperateXml(paymentXml));
             return OperatePkt.Generate();
+        }
+
+        public static byte[] BuildBalanceInquireResult(byte brandType, string cardNo = "01391144551419198100", string seqNumber = "1")
+        {
+            //var returnBalanceJson = new Receipts.Receipt_BalanceInquire.Receipt_BalanceInquire_Paseli();
+            //returnBalanceJson.CardNo = cardNo;
+            //returnBalanceJson.Balance = 1234;
+
+            //string paymentPacket = JsonConvert.SerializeObject(returnBalanceJson);
+            string paymentPacket = BuildBalanceInquireResult(brandType, cardNo);
+            string paymentXml = ReturnOperateEntityXml_AuthorizeSales(
+                serviceName: "AuthorizeSales",
+                AdditionalSecurityInformation: paymentPacket,
+                SeqNumber: seqNumber,
+                balance: "1234",
+                setAmount: "0",
+                account: cardNo);
+
+            var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
+            //播放刷卡成功音
+            OperatePkt.AddSubType(BasicBuilder.PlaySound(brandType));
+            //LED常量绿灯 5秒
+            OperatePkt.AddSubType(BasicBuilder.OperateLED(BasicBuilder.LEDMode.Static, BasicBuilder.LEDColor.Green, 5000));
+            //更新机台的OperateXml，内含账单
+            OperatePkt.AddSubType(BasicBuilder.UpdateOperateXml(paymentXml));
+            return OperatePkt.Generate();
+
         }
 
         /// <summary>
@@ -338,6 +359,115 @@ namespace miniThincaLib
             OperatePkt.AddSubType(BasicBuilder.UpdateOperateXml(opCmdParamBytes));
 
             return OperatePkt.Generate();
+        }
+
+        static string BuildPaymentJsonByBrandType(byte brandType,int amount,string cardNo)
+        {
+            switch ((ThincaBrandType)brandType)
+            {
+                case ThincaBrandType.Nanaco:
+                    var newResult_nnc = new Receipts.ReceiptInfo_Nanaco();
+                    return JsonConvert.SerializeObject(newResult_nnc);
+
+                case ThincaBrandType.Edy:
+                    var newResult_edy = new Receipts.ReceiptInfo_Edy.ReceiptInfo_Edy_Payment();
+                    newResult_edy.DealBefERemainder = 201;
+                    newResult_edy.DealAftRemainder = 101;
+                    return JsonConvert.SerializeObject(newResult_edy);
+
+                case ThincaBrandType.Id:
+                    var newResult_iD = new Receipts.Receipt_Payment.Receipt_Payment_iD();
+                    newResult_iD.SettledAmount = amount;
+                    newResult_iD.ApprovalNumber = cardNo;
+                    return JsonConvert.SerializeObject(amount);
+
+                case ThincaBrandType.Quicpay:
+                    var newResult_qcp = new Receipts.Receipt_Payment.Receipt_Payment_QuicPay();
+                    newResult_qcp.SettledAmount = amount;
+                    newResult_qcp.AccountNumber = cardNo;
+                    return JsonConvert.SerializeObject(newResult_qcp);
+
+                case ThincaBrandType.Transport:
+                    var newResult_tsp = new Receipts.Receipt_Payment.Receipt_Payment_Transport();
+                    newResult_tsp.SettledAmount = amount;
+                    newResult_tsp.DealBefRemainder = 201;
+                    newResult_tsp.DealAftRemainder = 101;
+                    newResult_tsp.AccountNumber = cardNo;
+                    return JsonConvert.SerializeObject(newResult_tsp);
+
+                case ThincaBrandType.Waon:
+                    var newResult_wao = new Receipts.Receipt_Payment.Receipt_Payment_Waon();
+                    newResult_wao.SettledAmount = amount;
+                    newResult_wao.DealBefRemainder = 201;
+                    newResult_wao.DealAftRemainder = 101;
+                    newResult_wao.AccountNumber = cardNo;
+                    return JsonConvert.SerializeObject(newResult_wao);
+
+                case ThincaBrandType.Nanaco2:
+                    var newResult_nc2 = new Receipts.Receipt_Payment.Receipt_Payment_Nanaco2();
+                    newResult_nc2.DealBefRemainder = 201;
+                    newResult_nc2.DealAftRemainder = 101;
+                    newResult_nc2.SettledAmount = amount;
+                    newResult_nc2.AccountNumber = cardNo;
+                    return JsonConvert.SerializeObject(newResult_nc2);
+
+                case ThincaBrandType.Paseli:
+                    var newResult_psl = new Receipts.Receipt_Payment.Receipt_Payment_Paseli();
+                    newResult_psl.CardNo = cardNo;
+                    newResult_psl.SettledAmount = amount;
+                    newResult_psl.Balance = amount + 1;
+                    return JsonConvert.SerializeObject(newResult_psl);
+
+                case ThincaBrandType.Sapica:
+                    var newResult_spc = new Receipts.Receipt_Payment.Receipt_Payment_Sapica();
+                    newResult_spc.AccountNumber = cardNo;
+                    newResult_spc.DealBefRemainder = 201;
+                    newResult_spc.DealAftRemainder = 101;
+                    newResult_spc.SettledAmount = amount;
+                    return JsonConvert.SerializeObject(newResult_spc);
+
+                default:
+                    var newResult = new Receipts.Receipt_Payment.Receipt_Payment_Base();
+                    newResult.AccountNumber = cardNo;
+                    newResult.SettledAmount = amount;
+                    return JsonConvert.SerializeObject(newResult);
+            }
+        }
+
+        static string BuildBalanceInquireResult(byte brandType, string cardNo)
+        {
+            switch ((ThincaBrandType)brandType)
+            {
+                case ThincaBrandType.Nanaco:
+                    var resp_nnc = new Receipts.ReceiptInfo_Nanaco();
+                    return JsonConvert.SerializeObject(resp_nnc);
+                case ThincaBrandType.Edy:
+                    var resp_edy = new Receipts.ReceiptInfo_Edy.ReceiptInfo_Edy_BalanceInquire();
+                    return JsonConvert.SerializeObject(resp_edy);
+                case ThincaBrandType.Nanaco2:
+                    var resp_nc2 = new Receipts.Receipt_BalanceInquire.Receipt_BalanceInquire_Nanaco();
+                    resp_nc2.AccountNumber = cardNo;
+                    return JsonConvert.SerializeObject(resp_nc2);
+                case ThincaBrandType.Paseli:
+                    var resp_psl = new Receipts.Receipt_BalanceInquire.Receipt_BalanceInquire_Paseli();
+                    resp_psl.AccountNumber = cardNo;
+                    resp_psl.Balance = 201;
+                    resp_psl.CardNo = cardNo;
+                    resp_psl.SettledAmount = 0;
+                    return JsonConvert.SerializeObject(resp_psl);
+                case ThincaBrandType.Sapica:
+                    var resp_spc = new Receipts.Receipt_BalanceInquire.Receipt_BalanceInquire_Sapica();
+                    resp_spc.AccountNumber = cardNo;
+                    resp_spc.SettledAmount = 0;
+                    return JsonConvert.SerializeObject(resp_spc);
+
+                default:
+                    var resp = new Receipts.Receipt_BalanceInquire.Receipt_BalanceInquire_Base();
+                    resp.AccountNumber = cardNo;
+                    resp.SettledAmount = 0;
+                    return JsonConvert.SerializeObject(resp);
+
+            }
         }
 
     }

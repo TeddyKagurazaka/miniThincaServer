@@ -72,6 +72,9 @@ while (true)
             }
             Environment.Exit(0);
             break;
+        case ConsoleKey.Enter:
+            Console.Clear();
+            break;
         default:
             break;
     }

@@ -89,12 +89,16 @@ public class miniThinca
                                 break;
                             case "stage2":
                                 UseBinary = true;
-                                OutputBinary = handler.HandleTcapRequest(TcapHandler.TcapRequestType.initAuth, Input);
+                                OutputBinary = handler.HandleTcapRequest(
+                                    requestMethod: TcapHandler.TcapRequestType.initAuth,
+                                    Input: Input);
                                 Context.Response.AddHeader("Content-Type", "application/x-tcap");
                                 break;
                             case "emstage2":
                                 UseBinary = true;
-                                OutputBinary = handler.HandleTcapRequest(TcapHandler.TcapRequestType.emStage2, Input);
+                                OutputBinary = handler.HandleTcapRequest(
+                                    requestMethod:TcapHandler.TcapRequestType.emStage2,
+                                    Input:Input);
                                 Context.Response.AddHeader("Content-Type", "application/x-tcap");
                                 break;
                         }
@@ -119,12 +123,20 @@ public class miniThinca
                                 break;
                             case "stage2":
                                 UseBinary = true;
-                                OutputBinary = handler.HandleTcapRequest(TcapHandler.TcapRequestType.AuthorizeSales, Input, RequestRawUrlParam[3]);
+                                OutputBinary = handler.HandleTcapRequest(
+                                    requestMethod: TcapHandler.TcapRequestType.AuthorizeSales,
+                                    Input: Input,
+                                    brandName: RequestRawUrlParam[2],
+                                    termSerial: RequestRawUrlParam[3]);
                                 Context.Response.AddHeader("Content-Type", "application/x-tcap");
                                 break;
                             case "query_stage2":
                                 UseBinary = true;
-                                OutputBinary = handler.HandleTcapRequest(TcapHandler.TcapRequestType.BalanceInquire, Input, RequestRawUrlParam[3]);
+                                OutputBinary = handler.HandleTcapRequest(
+                                    requestMethod: TcapHandler.TcapRequestType.BalanceInquire,
+                                    Input: Input,
+                                    brandName: RequestRawUrlParam[2],
+                                    termSerial: RequestRawUrlParam[3]);
                                 Context.Response.AddHeader("Content-Type", "application/x-tcap");
                                 break;
                         }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-
-namespace miniThincaLib
+﻿namespace miniThincaLib
 {
 	public class Configuration
 	{
@@ -16,15 +13,15 @@ namespace miniThincaLib
 		Dictionary<Models.ThincaBrandType, bool> _brandSwitch =
 			new Dictionary<Models.ThincaBrandType, bool>()
 		{
-			{Models.ThincaBrandType.Nanaco,false},
-            {Models.ThincaBrandType.Edy,false},
-            {Models.ThincaBrandType.Id,false},
-            {Models.ThincaBrandType.Quicpay,false},
+			{Models.ThincaBrandType.Nanaco,false},		
+            {Models.ThincaBrandType.Edy,false},			//还没写通，报错
+            {Models.ThincaBrandType.Id,false},			//还没写通，刷卡后不认
+            {Models.ThincaBrandType.Quicpay,false},		//用不了
             {Models.ThincaBrandType.Transport,false},
             {Models.ThincaBrandType.Waon,false},
-            {Models.ThincaBrandType.Nanaco2,false},
+            {Models.ThincaBrandType.Nanaco2,false},		//用不了
             {Models.ThincaBrandType.Paseli,true},
-            {Models.ThincaBrandType.Sapica,false},
+            {Models.ThincaBrandType.Sapica,false},		//用不了(游戏ignore)
         };
 
 		/// <summary>

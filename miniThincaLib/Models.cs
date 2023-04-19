@@ -1,7 +1,7 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using miniThincaLib.Helper;
 using static miniThincaLib.Helper.Helper;
+using static miniThincaLib.Models.Receipts.ReceiptInfo_Base;
 
 namespace miniThincaLib
 {
@@ -251,50 +251,398 @@ namespace miniThincaLib
             }
         }
 
-        /// <summary>
-        /// 支付成功时返回的账单内容
-        /// </summary>
-        public class ReceiptInfo
+        public class Receipts
         {
-            public enum receiptTypeEnum : int
+            /// <summary>
+            /// 支付成功时返回的账单内容
+            /// </summary>
+            public class ReceiptInfo_Base
             {
-                Payment = 0,            //2,3,4,5,6,7,8,9
-                Charge = 1,             //2,5,6,7,9
-                Alarm = 2,              //2,3,4,5,6,7
-                CenterCommResult = 3,   //2
-                ReceiptPayment = 4,     //2
-                BalanceInquire = 5,     //2,7,8,9
-                VoidPayment = 7,        //3,4,5,6,8,9
-                IntermidiateSales = 8,  //4
-                VoidCharge = 10,        //5,6,9
-                PointChargeWaon = 11,   //6
-                ReceiptRefuindWaon = 12 //6
+                public enum receiptTypeEnum : int
+                {
+                    Payment = 0,            //2,3,4,5,6,7,8,9
+                    Charge = 1,             //2,5,6,7,9
+                    Alarm = 2,              //2,3,4,5,6,7
+                    CenterCommResult = 3,   //2
+                    ReceiptPayment = 4,     //2
+                    BalanceInquire = 5,     //2,7,8,9
+                    History = 6,
+                    VoidPayment = 7,        //3,4,5,6,8,9
+                    IntermidiateSales = 8,  //4
+                    VoidCharge = 10,        //5,6,9
+                    PointChargeWaon = 11,   //6
+                    ReceiptRefundWaon = 12 //6
+                }
+                public enum CompanyName
+                {
+                    JCB = 77322,
+                    iD = 99663
+                }
+
+
+                //0:付款 5:余额查询
+                public string ReceiptType = ((int)receiptTypeEnum.Payment).ToString();
+
+                public string UpperTerminalId = "11445514";
+                public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                public long SettledAmount = 100;
+
+                //必须为1才能成功，2好像是错误状态
+                public long ReceiptDest = 1;
+
+                public string AccountNumber = "11445514";
+
+
+                public ReceiptInfo_Base(receiptTypeEnum receiptType)
+                {
+                    ReceiptType = ((int)receiptType).ToString();
+                }
+
             }
 
-
-            //0:付款 5:余额查询
-            public string ReceiptType = ((int)receiptTypeEnum.Payment).ToString();
-            public long SettledAmount = 100;
-            public long Balance = 101;
-
-            public string PaseliDealNo = "1145141919810893";
-            public string ApprovalCode = "1";
-            public string UpperTerminalId = "11445514";
-            public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            public string CardNo = "01391144551419198100";
-
-
-            //必须为1才能成功，2好像是错误状态
-            public long ReceiptDest = 1;
-
-            public ReceiptInfo(receiptTypeEnum receiptType)
+            /// <summary>
+            /// 回传Nanaco的ReceiptInfo
+            /// 不同于其他Brand，这个依赖Xml传参，所以大部分办法只需要这个参数
+            /// TODO:我还没测
+            /// </summary>
+            public class ReceiptInfo_Nanaco
             {
-                ReceiptType = ((int)receiptType).ToString();
+                //他依赖外层Xml传参数，这一层几乎不读东西
+                public string UpperTerminalId = "11445514";
+                public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             }
+            /// <summary>
+            /// 回传Edy的ReceiptInfo
+            /// 这个都能独立一个函数处理了，所以独立处理
+            /// TODO:我还没测
+            /// </summary>
+            public class ReceiptInfo_Edy
+            {
+                public class ReceiptInfo_Edy_Base
+                {
+                    public string ReceiptType;
+                    public string UPPER_TERMINAL_ID = "11455514";
+                    public ReceiptInfo_Edy_Base(string receiptType) => ReceiptType = receiptType;
+                }
+                public class ReceiptInfo_Edy_Payment : ReceiptInfo_Edy_Base
+                {
+                    public string EMoneyDealNo = "11445514";
+                    public string EdyDealNo = "1144514";
+                    public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    public int DealAftRemainder = 102;
+                    public int DealBefERemainder = 103;
+                    public ReceiptInfo_Edy_Payment(string ReceiptType = "0") : base(ReceiptType) { }
+                }
 
+                public class ReceiptInfo_Edy_Charge : ReceiptInfo_Edy_Payment
+                {
+                    public ReceiptInfo_Edy_Charge() : base("1") { }
+                }
+                public class ReceiptInfo_Edy_Alarm : ReceiptInfo_Edy_Payment
+                {
+                    public ReceiptInfo_Edy_Alarm() : base("2") { base.DealAftRemainder = 0; }
+                }
+
+                public class ReceiptInfo_Edy_CenterCommResult : ReceiptInfo_Edy_Base
+                {
+                    public string ClosingTime = "1111";
+                    public string ChargeUnknownDealTotalAmount = "1";
+                    public string ChargeUnknownDealCnt = "2";
+                    public string ChargeDealTotalAmount = "3";
+                    public string ChargeDealCnt = "4";
+                    public string UseUnknownDealTotalAmount = "5";
+                    public string UseUnknownDealCnt = "6";
+                    public string UseDealTotalAmount = "7";
+                    public string UseDealCnt = "8";
+
+                    public ReceiptInfo_Edy_CenterCommResult() : base("3") { }
+                }
+                public class ReceiptInfo_Edy_ReceiptPayment : ReceiptInfo_Edy_Base
+                {
+                    public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    public ReceiptInfo_Edy_ReceiptPayment(string method = "4") : base(method) { }
+                }
+                public class ReceiptInfo_Edy_BalanceInquire : ReceiptInfo_Edy_ReceiptPayment
+                {
+                    public ReceiptInfo_Edy_BalanceInquire() : base("5") { }
+                }
+                public class ReceiptInfo_Edy_History : ReceiptInfo_Edy_ReceiptPayment
+                {
+                    public int[] LogType = { 0 };
+                    public int[] DealDate = { 0 };
+                    public int[] DealNumber = { 0 };
+                    public int[] DealAmount = { 0 };
+                    public int[] Remainder = { 0 };
+
+                    public ReceiptInfo_Edy_History() : base("6") { }
+                }
+            }
+            public class Receipt_Payment
+            {
+                public class Receipt_Payment_Base : ReceiptInfo_Base
+                {
+                    public Receipt_Payment_Base() : base(receiptTypeEnum.Payment) { }
+                }
+
+                public class Receipt_Payment_Paseli : Receipt_Payment_Base
+                {
+                    public long Balance = 101;
+                    public string PaseliDealNo = "1145141919810893";
+                    public string ApprovalCode = "1";
+                    public string CardNo = "01391144551419198100";
+                }
+                public class Receipt_Payment_iD : Receipt_Payment_Base
+                {
+                    public string CardCompanyId = ((int)CompanyName.iD).ToString();
+                    public string UsableLimit = "10001";
+
+                    public string ValidDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    public string GoodsCode = "1001";
+                    public string ApprovalNumber = "1";
+                }
+
+                public class Receipt_Payment_QuicPay : Receipt_Payment_iD
+                {
+                    public string QPGoodsCode = "1001";
+                    public string QppreBalanceInfo = "10002";
+                    public Receipt_Payment_QuicPay() { CardCompanyId = ((int)CompanyName.JCB).ToString(); }
+                }
+
+                public class Receipt_Payment_Transport : Receipt_Payment_Base
+                {
+                    public int DealAftRemainder = 103;
+                    public int DealBefRemainder = 203;
+                }
+
+                public class Receipt_Payment_Waon : Receipt_Payment_Transport
+                {
+                    public int PointMessageID = 0;
+                    public int CumulativePoint = 2;
+                    public int Point = 3;
+                    public bool AutoChargeFlg = false;
+                    public int AutoChargeAmount = 100;
+                    public int MerchantPoint = 1;
+                    public int Powered = 1;
+                    public int PoweredMerchantPoint = 1022;
+                    public int PreviousYearPoint = 1011;
+                    public string PreviousYearPointExpiration = "2024-12-31";
+                }
+
+                public class Receipt_Payment_Nanaco2 : Receipt_Payment_Transport
+                {
+
+                }
+
+                public class Receipt_Payment_Sapica : Receipt_Payment_Transport
+                {
+                    public string DealDetailId = "1";
+                    public int CumulativePoint = 2;
+                    public int Point = 3;
+                    public int PointType = 1;
+                    public int JustChargeAmount = 100;
+                    public string ApprovalCode = "1";
+                }
+            }
+            public class Receipt_Charge
+            {
+                public class Receipt_Charge_Base : ReceiptInfo_Base
+                {
+                    public Receipt_Charge_Base() : base( receiptTypeEnum.Charge) { }
+                }
+
+                public class Receipt_Charge_Transport : Receipt_Charge_Base
+                {
+                    public int DealAftRemainder = 103;
+                    public int DealBefRemainder = 203;
+                }
+
+                public class Receipt_Charge_Waon : Receipt_Charge_Transport { }
+
+                public class Receipt_Charge_Nanaco2 : Receipt_Charge_Transport { }
+
+                public class Receipt_Charge_Sapica : Receipt_Charge_Transport
+                {
+                    public int DealDetailId = 1;
+                    public int CumulativePoint = 2;
+                }
+            }
+            public class Receipt_Alarm
+            {
+                public class Receipt_Alarm_Base : ReceiptInfo_Base
+                {
+                    public Receipt_Alarm_Base() : base( receiptTypeEnum.Alarm) { }
+                }
+
+                public class Receipt_Alarm_iD : Receipt_Alarm_Base { }
+
+                public class Receipt_Alarm_QuicPay : Receipt_Alarm_Base { }
+
+                public class Receipt_Alarm_Transport : Receipt_Alarm_Base
+                {
+                    public int DealBefRemainder = 203;
+                }
+
+                public class Receipt_Alarm_Waon : Receipt_Alarm_Transport
+                {
+                    public int WaonDealType = 1;
+                }
+
+                public class Receipt_Alarm_Nanaco2 : Receipt_Alarm_Transport
+                {
+                    public int NanacoDealType = 1;
+                }
+            }
+            public class Receipt_BalanceInquire
+            {
+                public class Receipt_BalanceInquire_Base : ReceiptInfo_Base
+                {
+                    public Receipt_BalanceInquire_Base() : base (receiptTypeEnum.BalanceInquire) { }
+                }
+
+                public class Receipt_BalanceInquire_Nanaco : Receipt_BalanceInquire_Base
+                {
+
+                }
+
+                public class Receipt_BalanceInquire_Paseli : Receipt_BalanceInquire_Base
+                {
+                    public int Balance = 100;
+                    public string CardNo = "1144551419198100";
+                }
+
+                public class Receipt_BalanceInquire_Sapica : Receipt_BalanceInquire_Nanaco
+                {
+                    public int DealDetailId = 1;
+                    public int CumulativePoint = 2;
+                }
+            }
+            public class Receipt_VoidPayment
+            {
+                public class Receipt_VoidPayment_Base : ReceiptInfo_Base
+                {
+                    public Receipt_VoidPayment_Base() : base (receiptTypeEnum.VoidPayment) { }
+                }
+
+                public class Receipt_VoidPayment_iD : Receipt_VoidPayment_Base
+                {
+                    public string CardCompanyId = ((int)CompanyName.iD).ToString();
+                    public string ValidDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    public string GoodsCode = "1001";
+                    public string ApprovalNumber = "1";
+                }
+
+                public class Receipt_VoidPayment_QuicPay : Receipt_VoidPayment_iD
+                {
+                    public string QPGoodsCode = "1001";
+                    public string QppreBalanceInfo = "10002";
+
+                    public Receipt_VoidPayment_QuicPay() { CardCompanyId = ((int)CompanyName.JCB).ToString(); }
+                }
+
+                public class Receipt_VoidPayment_Transport : Receipt_VoidPayment_Base
+                {
+                    public int DealAftRemainder = 103;
+                    public int DealBefRemainder = 203;
+                }
+
+                public class Receipt_VoidPayment_Waon : Receipt_VoidPayment_Transport
+                {
+                    public int PointMessageID = 0;
+                    public int CumulativePoint = 2;
+                    public int Point = 3;
+                    public bool AutoChargeFlg = false;
+
+                    public int PreviousYearPoint = 1011;
+                    public string PreviousYearPointExpiration = "2024-12-31";
+                }
+
+                public class Receipt_VoidPayment_Paseli : Receipt_VoidPayment_Base
+                {
+                    public long Balance = 101;
+                    public string PaseliDealNo = "1145141919810893";
+                    public string ApprovalCode = "1";
+                    public string CardNo = "01391144551419198100";
+                }
+
+                public class Receipt_VoidPayment_Sapica : Receipt_VoidPayment_Transport
+                {
+                    public string DealDetailId = "1";
+                    public int CumulativePoint = 2;
+                    public int Point = 3;
+                    public int PointType = 1;
+                    public bool JustChargeAvailable = false;
+                    public string ApprovalCode = "1";
+                }
+            }
+            public class Receipt_IntermediateSales_QuicPay
+            {
+                public class Receipt_IntermediateSales_CardCompanyItem
+                {
+                    public string CardCompanyCode = ((int)CompanyName.JCB).ToString();
+                    public int CardCompanyVoidAmount = 100;
+                    public int CardCompanyVoidCount = 1;
+                    public int CardCompanySalesAmount = 100;
+                    public int CardCompanySalesCount = 1;
+                }
+                public string ReceiptType = ((int)receiptTypeEnum.IntermidiateSales).ToString();
+                public string DealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                public string LastDealYMD = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                public int EndSequenceNumber = 1001;
+                public int BeginSequenceNumber = 1000;
+
+                public long ReceiptDest = 1;
+
+                public Receipt_IntermediateSales_CardCompanyItem CardCompanyItem = new Receipt_IntermediateSales_CardCompanyItem();
+            }
+            public class Receipt_VoidCharge
+            {
+                public class Receipt_VoidCharge_Base : ReceiptInfo_Base
+                {
+                    public Receipt_VoidCharge_Base() : base (receiptTypeEnum.VoidCharge) { }
+                }
+                public class Receipt_VoidCharge_Transport : Receipt_VoidCharge_Base
+                {
+                    public int DealAftRemainder = 103;
+                    public int DealBefRemainder = 203;
+                }
+
+                public class Receipt_VoidCharge_Waon : Receipt_VoidCharge_Transport
+                {
+
+                }
+
+                public class Receipt_VoidCharge_Sapica : Receipt_VoidCharge_Transport
+                {
+                    public int DealDetailId = 1;
+                    public int CumulativePoint = 2;
+                }
+            }
+            public class Receipt_PointChaege_Waon : ReceiptInfo_Base
+            {
+                public int PreviousYearPoint = 1011;
+                public string PreviousYearPointExpiration = "2024-12-31";
+                public int CumulativePoint = 2;
+                public int DealAftRemainder = 103;
+                public int DealBefRemainder = 203;
+
+                public Receipt_PointChaege_Waon() : base(receiptTypeEnum.PointChargeWaon) { }
+            }
+            public class Receipt_ReceiptRefund_Waon : ReceiptInfo_Base
+            {
+                public int PointMessageID = 0;
+                public int CumulativePoint = 2;
+                public int Point = 3;
+                public int DealAftRemainder = 103;
+                public int DealBefRemainder = 203;
+                public int PreviousYearPoint = 1011;
+                public string PreviousYearPointExpiration = "2024-12-31";
+                public Receipt_ReceiptRefund_Waon() : base(receiptTypeEnum.ReceiptRefundWaon) { }
+            }
         }
-
-        public static class Activation
+        public class Activation
         {
             public class endpointUriClass
             {
@@ -344,7 +692,7 @@ namespace miniThincaLib
             }
         }
 
-        public static class ClientIoOperation
+        public class ClientIoOperation
         {
             public class ClientIo
             {
@@ -431,17 +779,20 @@ namespace miniThincaLib
             public class AmountEventIo : ClientIo
             {
                 public AmountEventIo(int deviceNumber, int actionType, short brandType, byte code2, int payment, short code5)
-                    : base(deviceTypeEnum.AmountEvent, deviceNumber, actionType, null, true)
+                    : base(deviceTypeEnum.AmountEvent, deviceNumber, actionType, null, false)
                 {
+                    //deviceNumber作为option带入
+
                     var brandTypeByte = returnReversedByte(brandType);
                     var paymentByte = returnReversedByte(payment);
+                    var afterPayByte = returnReversedByte(payment + 100);
                     var code5Byte = returnReversedByte(code5);
                     sendData = new int[]
                     {
                     brandTypeByte[0],brandTypeByte[1],
-                    code2,
+                    code2,  //1,4->1(支付) 3,5->2(充值) 6,7->3(余额) 8,9->4(取消支付) 10->? 11->7(自动充值) || 2,4,5,7,9的时候还会读取3(余额)
                     paymentByte[0],paymentByte[1],paymentByte[2],paymentByte[3],
-                    paymentByte[0],paymentByte[1],paymentByte[2],paymentByte[3],
+                    afterPayByte[0],afterPayByte[1],afterPayByte[2],afterPayByte[3],    //code2=2,4,5,7,9时生效
                     code5Byte[0],code5Byte[1]
                     };
                 }
@@ -470,7 +821,7 @@ namespace miniThincaLib
             }
         }
 
-        public static class SecurityMessage
+        public class SecurityMessage
         {
             public class AdditionalSecurityMessage
             {
@@ -499,33 +850,6 @@ namespace miniThincaLib
                 {
                     URL = miniThinca.config.ReturnBrandUrl(termSerial);
                 }
-            }
-
-            public class AdditionalSecurityMessage_AuthorizeSales : ReceiptInfo
-            {
-                //public string ServiceBranchNo = "2";
-                //public string GoodsCode = "0990";
-
-                //public int TotalPointOfPastYear = 100;
-                //public int TotalPointOfPreviousYear = 101;
-                //public int BalanceLimit = 10000;
-                //public int ChargeLimitPerOnce = 10000;
-
-                public AdditionalSecurityMessage_AuthorizeSales() : base(receiptTypeEnum.Payment) { }
-            }
-
-            public class AdditionalSecurityMessage_BalanceInquiry : ReceiptInfo
-            {
-                //public string ServiceBranchNo = "2";
-                //public string GoodsCode = "0990";
-
-
-                //public int TotalPointOfPastYear = 100;
-                //public int TotalPointOfPreviousYear = 101;
-                //public int BalanceLimit = 10000;
-                //public int ChargeLimitPerOnce = 10000;
-
-                public AdditionalSecurityMessage_BalanceInquiry() : base(receiptTypeEnum.BalanceInquire) { }
             }
 
             public static string ReturnOperateEntityXml_initAuth(string serviceName, string AdditionalSecurityInformation)
