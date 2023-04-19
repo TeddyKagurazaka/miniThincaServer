@@ -1,119 +1,119 @@
-# »¨»î
-ÕâÀï»á¾¡¿ÉÄÜµÄ³¢ÊÔ½âÊÍThincaPaymentµÄÔ­Àí£¬ÕâÑùÄã¾ÍÄÜÕûĞ©»¨»îÁË
+# èŠ±æ´»
+è¿™é‡Œä¼šå°½å¯èƒ½çš„å°è¯•è§£é‡ŠThincaPaymentçš„åŸç†ï¼Œè¿™æ ·ä½ å°±èƒ½æ•´äº›èŠ±æ´»äº†
 
-## ×¢²áÁ÷³Ì
-´Ë´¦ÒÔ´ÓÎ´Åö¹ıEMoneyµÄ»úÆ÷ÎªÀı
+## æ³¨å†Œæµç¨‹
+æ­¤å¤„ä»¥ä»æœªç¢°è¿‡EMoneyçš„æœºå™¨ä¸ºä¾‹
 
-ÔÚ»úÆ÷Ñ¡Ôñ ÓÎÏ·-µç×ÓÖ§¸¶ĞÅÏ¢-»úÌ¨ÈÏÖ¤-¿ªÊ¼ÈÏÖ¤ ºó£¬»úÌ¨»áÏÈ¼ì²éVFDÁ¬½Ó£¬Á¬½ÓÕı³£ºó¿ªÊ¼¶ÁÊÚÈ¨¿¨Á÷³Ì
+åœ¨æœºå™¨é€‰æ‹© æ¸¸æˆ-ç”µå­æ”¯ä»˜ä¿¡æ¯-æœºå°è®¤è¯-å¼€å§‹è®¤è¯ åï¼Œæœºå°ä¼šå…ˆæ£€æŸ¥VFDè¿æ¥ï¼Œè¿æ¥æ­£å¸¸åå¼€å§‹è¯»æˆæƒå¡æµç¨‹
 
-ÊÚÈ¨¿¨µÄ²ÎÊıÈçÏÂ:<br />Èç¹ûÊµÔÚÏëÍµÀÁ£¬
-[ÕâÀïÓĞÏÖ³ÉµÄ](https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'E8ADB54FBE8D2DC44A16C6B339A06457C3A1253ED8910D6BA666A77F5A3E1FFC'%7D,%7B'option':'Hex','string':'2B0C9071661C20AFEC7061CC639E7BAB'%7D,'CBC','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=MzEzMTM0MzQzNTM1MzEzNDMxMzkzMTM5MzgzMTMwMzAzMTMxMzQzNTMxMzQzMTM5MzEzOTMxMzEzNDM1MzEzNDMxMzkzMTM5MzEzMTM1MzEzNDcwNjE3MzczNzA2ODcyNjE3MzY1MzEzMTM0MzUzMTM0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA)
+æˆæƒå¡çš„å‚æ•°å¦‚ä¸‹:<br />å¦‚æœå®åœ¨æƒ³å·æ‡’ï¼Œ
+[è¿™é‡Œæœ‰ç°æˆçš„](https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'E8ADB54FBE8D2DC44A16C6B339A06457C3A1253ED8910D6BA666A77F5A3E1FFC'%7D,%7B'option':'Hex','string':'2B0C9071661C20AFEC7061CC639E7BAB'%7D,'CBC','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=MzEzMTM0MzQzNTM1MzEzNDMxMzkzMTM5MzgzMTMwMzAzMTMxMzQzNTMxMzQzMTM5MzEzOTMxMzEzNDM1MzEzNDMxMzkzMTM5MzEzMTM1MzEzNDcwNjE3MzczNzA2ODcyNjE3MzY1MzEzMTM0MzUzMTM0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA)
 
 
-	ÊÚÈ¨¿¨±¾ÉíÎªMifare ClassicÀàĞÍ£¬Ò²¾ÍÊÇË¢Äã¼ÒÃÅ½û»òÕßÃÅËøµÄÄÇÕÅ¿¨¡£
-	¿¨Æ¬ÃÜÂëÎª thinca ×ª16½øÖÆ (74 68 69 6E 63 61)
-	ÆäÖĞ°üº¬ÒÔÏÂÄÚÈİ£º
-		storeCardId(offset+0 16byte Ã÷ÎÄ)
-		merchantCode(offset+16 20byte Ã÷ÎÄ)
-		storeBranchNumber(offset+36 ¶Á12byteÈ¡Ç°5byte Ã÷ÎÄ)
-		Ö¤ÊéÃÜÂë(offset+41 16byte Ã÷ÎÄ)
-		Ö®ºóÌî³ä00µ½128 byte
+	æˆæƒå¡æœ¬èº«ä¸ºMifare Classicç±»å‹ï¼Œä¹Ÿå°±æ˜¯åˆ·ä½ å®¶é—¨ç¦æˆ–è€…é—¨é”çš„é‚£å¼ å¡ã€‚
+	å¡ç‰‡å¯†ç ä¸º thinca è½¬16è¿›åˆ¶ (74 68 69 6E 63 61)
+	å…¶ä¸­åŒ…å«ä»¥ä¸‹å†…å®¹ï¼š
+		storeCardId(offset+0 16byte æ˜æ–‡)
+		merchantCode(offset+16 20byte æ˜æ–‡)
+		storeBranchNumber(offset+36 è¯»12byteå–å‰5byte æ˜æ–‡)
+		è¯ä¹¦å¯†ç (offset+48 16byte æ˜æ–‡)
+		ä¹‹åå¡«å……00åˆ°128 byte
 
-	ÕâÒ»¿éÄÚÈİ»á½øĞĞ¼ÓÃÜ£º
+	è¿™ä¸€å—å†…å®¹ä¼šè¿›è¡ŒåŠ å¯†ï¼š
 		Key:E8ADB54FBE8D2DC44A16C6B339A06457C3A1253ED8910D6BA666A77F5A3E1FFC
 		IV:2B0C9071661C20AFEC7061CC639E7BAB
 		Method:AES CBC
 		
-	¼ÓÃÜºóµÃµ½128byte ÃÜÎÄ£¬½«ÆäĞ´Èë¿¨Æ¬µÄSector 1 µÚ¶şÅÅµ½ Sector 3 µÄµÚÈıÅÅ
-	ÉèÖÃSector 1µÄµÚÒ»ÅÅÎª 54 43 02 01(ĞŞ¸ÄÕâÒ»ÅÅºÃÏñ»á´¥·¢±ÈÈçproxySettingÖ®ÀàµÄÇé¿ö£¬»áµ¼ÖÂÑéÖ¤²»Í¨¹ı£¬Ò»°ã²»¶¯)
+	åŠ å¯†åå¾—åˆ°128byte å¯†æ–‡ï¼Œå°†å…¶å†™å…¥å¡ç‰‡çš„Sector 1 ç¬¬äºŒæ’åˆ° Sector 3 çš„ç¬¬ä¸‰æ’
+	è®¾ç½®Sector 1çš„ç¬¬ä¸€æ’ä¸º 54 43 02 01(ä¿®æ”¹è¿™ä¸€æ’å¥½åƒä¼šè§¦å‘æ¯”å¦‚proxySettingä¹‹ç±»çš„æƒ…å†µï¼Œä¼šå¯¼è‡´éªŒè¯ä¸é€šè¿‡ï¼Œä¸€èˆ¬ä¸åŠ¨)
 
-	Íê¹¤¡£
+	å®Œå·¥ã€‚
 
-Èç¹ûÄãÓÃµÄÊÇRepoÀïµÄthincamod4.mct£¬Õâ¸öÎÄ¼ş×Ô´øµÄ²ÎÊıÊÇÕâÑù£º
+å¦‚æœä½ ç”¨çš„æ˜¯Repoé‡Œçš„thincamod4.mctï¼Œè¿™ä¸ªæ–‡ä»¶è‡ªå¸¦çš„å‚æ•°æ˜¯è¿™æ ·ï¼š
 
 	storeCardId:1144551419198100
 	merchantCode:11451419191145141919
-	storeBranchNumber:11514(Ö»È¡Ç°5Î»)
-	Ö¤ÊéÃÜÂë:ase114514
-	²»°üº¬ProxyÉèÖÃ
+	storeBranchNumber:11514(åªå–å‰5ä½)
+	è¯ä¹¦å¯†ç :ase114514
+	ä¸åŒ…å«Proxyè®¾ç½®
 
-Íê³É¶Á¿¨ÒÔºó£¬»úÆ÷»á½«²ÎÊı·¢Íù tfps-res-pro/env.json µÄ tasms.root_endpoint¡£Èç¹ûÄãÓĞ¸Äenv.jsonµÄ»°·şÎñÆ÷ÕâÊ±ºò¾Í»áÓĞÇëÇóÁË¡£ÇëÇóµÄÄÚÈİÈçÏÂ£º
+å®Œæˆè¯»å¡ä»¥åï¼Œæœºå™¨ä¼šå°†å‚æ•°å‘å¾€ tfps-res-pro/env.json çš„ tasms.root_endpointã€‚å¦‚æœä½ æœ‰æ”¹env.jsonçš„è¯æœåŠ¡å™¨è¿™æ—¶å€™å°±ä¼šæœ‰è¯·æ±‚äº†ã€‚è¯·æ±‚çš„å†…å®¹å¦‚ä¸‹ï¼š
 	
 	User-Proxy:SEGA AMUSEMENT
 	{
 		"modelName":"ACA",			//ALLS HX2
 		"serialNumber":"ACAE01A9999",		//Mainboard ID
-		"merchantCode":"11451419191145141919",	//¿´ÉÏÃæ
+		"merchantCode":"11451419191145141919",	//çœ‹ä¸Šé¢
 		"storeBranchNumber":11514,
 		"storeCardId":"1144551419198100"
 	}
 
-·şÎñÆ÷ÊÕµ½ÇëÇóºóÏÂ·¢³õÊ¼ÉèÖÃ£¬ÄÚÈİÈçÏÂ
+æœåŠ¡å™¨æ”¶åˆ°è¯·æ±‚åä¸‹å‘åˆå§‹è®¾ç½®ï¼Œå†…å®¹å¦‚ä¸‹
 
-	Header: "x-certificate-md5" = "Ö¤ÊéBase64Ç°µÄMD5"
+	Header: "x-certificate-md5" = "è¯ä¹¦Base64å‰çš„MD5"
 	{
-		certificate : "",	//¿Í»§¶ËÇëÇóÖ¤Êé,pkcs#12¸ñÊ½,ÊÚÈ¨¿¨¶Áµ½µÄÃÜÂëÒªÄÜ½â¿ªÕâ¸öÖ¤Êé
-					//´Ë´¦Òª¸½ÉÏÖ¤ÊéµÄbase64ºóÄÚÈİ£¬Ô­Ê¼ÄÚÈİ¼ÆËãMD5ÒÔºóÉèÖÃµ½headerÉÏ
-					//Èç¹ûÒªÊ¹ÓÃhttpsÍ¨Ñ¶£¬´Ë´¦µÄÖ¤Êé×÷Îª·şÎñÆ÷ÑéÖ¤¿Í»§¶ËÓÃ£¨Ë«ÏòÈÏÖ¤£©
+		certificate : "",	//å®¢æˆ·ç«¯è¯·æ±‚è¯ä¹¦,pkcs#12æ ¼å¼,æˆæƒå¡è¯»åˆ°çš„å¯†ç è¦èƒ½è§£å¼€è¿™ä¸ªè¯ä¹¦
+					//æ­¤å¤„è¦é™„ä¸Šè¯ä¹¦çš„base64åå†…å®¹ï¼ŒåŸå§‹å†…å®¹è®¡ç®—MD5ä»¥åè®¾ç½®åˆ°headerä¸Š
+					//å¦‚æœè¦ä½¿ç”¨httpsé€šè®¯ï¼Œæ­¤å¤„çš„è¯ä¹¦ä½œä¸ºæœåŠ¡å™¨éªŒè¯å®¢æˆ·ç«¯ç”¨ï¼ˆåŒå‘è®¤è¯ï¼‰
 		initSettings :{
 			endpoints : {
-				terminals:{	//Í¬²½ÅäÖÃµØÖ·£¬»úÆ÷»áÇëÇó¸ÃµØÖ·¸üĞÂinitSettings
-					uri: ""	//µØÖ·
+				terminals:{	//åŒæ­¥é…ç½®åœ°å€ï¼Œæœºå™¨ä¼šè¯·æ±‚è¯¥åœ°å€æ›´æ–°initSettings
+					uri: ""	//åœ°å€
 				},
-				statuses:{ Í¬terminals },	//×´Ì¬ÉÏ±¨µØÖ·£¬½ø´ı»úÇ°»á·¢Ò»´Î
-				sales:{ Í¬terminals },		//ÏúÊÛÉÏ±¨µØÖ·£¬¶¨Ê±·¢ËÍ
-				counters:{ Í¬terminals }	//Í¶±ÒÉÏ±¨µØÖ·£¬½ø´ı»úÇ°£¬Ã¿ÅÌÓÎÏ·½áÊøÊ±·¢ËÍ
+				statuses:{ åŒterminals },	//çŠ¶æ€ä¸ŠæŠ¥åœ°å€ï¼Œè¿›å¾…æœºå‰ä¼šå‘ä¸€æ¬¡
+				sales:{ åŒterminals },		//é”€å”®ä¸ŠæŠ¥åœ°å€ï¼Œå®šæ—¶å‘é€
+				counters:{ åŒterminals }	//æŠ•å¸ä¸ŠæŠ¥åœ°å€ï¼Œè¿›å¾…æœºå‰ï¼Œæ¯ç›˜æ¸¸æˆç»“æŸæ—¶å‘é€
 			},
 			intervals : {
-				checkSetting : 3600,	//Í¬²½ÅäÖÃ¼ä¸ô(Ãë)
-				sendStatus : 3600	//ÉÏ±¨×´Ì¬¼ä¸ô(Ãë)
+				checkSetting : 3600,	//åŒæ­¥é…ç½®é—´éš”(ç§’)
+				sendStatus : 3600	//ä¸ŠæŠ¥çŠ¶æ€é—´éš”(ç§’)
 			},
-			//Çë×¢ÒâÕâ¸öµØ·½ÊÇsettigsType£¬²»ÊÇsettingsType£¬ segay quality Àí½âÒ»ÏÂ
-			settigsType : "AmusementTerminalSettings", //ËøËÀ£¬²»ÄÜ¸Ä
-			status : "00",	//½á¹ûÂë£¬¿ÉÒÔÊ¹ÓÃÒÔÏÂÇé¿ö
-					//00:Íê³ÉÈÏÖ¤(³õÊ¼ÈÏÖ¤Ê±ÓÃ)
-					//10:Õı³£(Ë¢ĞÂÅäÖÃÊ±ÓÃ£¬´ËÊ±²ÅÄÜ´¥·¢Ë¢Ç®°ü)
-					//11:ÔİÍ£
-					//12:Î¬»¤
-					//80:Ôİ²»¿ÉÓÃ
-					//90:ÒÑ³·³ı(³·³ıÊ±ÓÃ)
-			terminalId : "111122223333444455556666777788",	//ÖÕ¶ËID£¬ÏÔÊ¾ÔÚÉèÖÃ²Ëµ¥£¬±ØĞëÎª30Î»Êı×Ö
-			version : "2023-01-01T12:34:56",	//°æ±¾ºÅ£¬¿ÉÒÔ°´ÕÕÕâ¸ö¸ñÊ½ÂÒ¸Ä£¬Ó¦¸ÃÊÇÔÚstatuses»Ø´«
-			availableElectronicMoney : [ 8 ],	//¿ÉÒÔÊ¹ÓÃµÄµç×ÓÇ®°üµÄBrandID£¬²ÎÕÕÏÂÃæ
-			cashAvailability : true,	//»úÆ÷ÄÜ²»ÄÜ½ÓÊÜÍ¶±Ò?(²»ÊÇºÜ¶®)
-			productCode : 1001	//²úÆ·´úÂë?
+			//è¯·æ³¨æ„è¿™ä¸ªåœ°æ–¹æ˜¯settigsTypeï¼Œä¸æ˜¯settingsTypeï¼Œ segay quality ç†è§£ä¸€ä¸‹
+			settigsType : "AmusementTerminalSettings", //é”æ­»ï¼Œä¸èƒ½æ”¹
+			status : "00",	//ç»“æœç ï¼Œå¯ä»¥ä½¿ç”¨ä»¥ä¸‹æƒ…å†µ
+					//00:å®Œæˆè®¤è¯(åˆå§‹è®¤è¯æ—¶ç”¨)
+					//10:æ­£å¸¸(åˆ·æ–°é…ç½®æ—¶ç”¨ï¼Œæ­¤æ—¶æ‰èƒ½è§¦å‘åˆ·é’±åŒ…)
+					//11:æš‚åœ
+					//12:ç»´æŠ¤
+					//80:æš‚ä¸å¯ç”¨
+					//90:å·²æ’¤é™¤(æ’¤é™¤æ—¶ç”¨)
+			terminalId : "111122223333444455556666777788",	//ç»ˆç«¯IDï¼Œæ˜¾ç¤ºåœ¨è®¾ç½®èœå•ï¼Œå¿…é¡»ä¸º30ä½æ•°å­—
+			version : "2023-01-01T12:34:56",	//ç‰ˆæœ¬å·ï¼Œå¯ä»¥æŒ‰ç…§è¿™ä¸ªæ ¼å¼ä¹±æ”¹ï¼Œåº”è¯¥æ˜¯åœ¨statuseså›ä¼ 
+			availableElectronicMoney : [ 8 ],	//å¯ä»¥ä½¿ç”¨çš„ç”µå­é’±åŒ…çš„BrandIDï¼Œå‚ç…§ä¸‹é¢
+			cashAvailability : true,	//æœºå™¨èƒ½ä¸èƒ½æ¥å—æŠ•å¸?(ä¸æ˜¯å¾ˆæ‡‚)
+			productCode : 1001	//äº§å“ä»£ç ?
 		}
 	}
 
-Èç¹ûÇëÇóÃ»ÓĞÎÊÌâ£¬¿Í»§»ú»á½«Ö¤ÊéÎÄ¼şÒÔ {terminalId}.p12 ¸ñÊ½±£´æÔÚ AMFS:\\emoney ÎÄ¼ş¼ĞÏÂ£¬È»ºó¶ÔThinca²ãÉèÖÃÖ¤Êé£¬²¢´¥·¢ Thinca->initAuth()
+å¦‚æœè¯·æ±‚æ²¡æœ‰é—®é¢˜ï¼Œå®¢æˆ·æœºä¼šå°†è¯ä¹¦æ–‡ä»¶ä»¥ {terminalId}.p12 æ ¼å¼ä¿å­˜åœ¨ AMFS:\\emoney æ–‡ä»¶å¤¹ä¸‹ï¼Œç„¶åå¯¹Thincaå±‚è®¾ç½®è¯ä¹¦ï¼Œå¹¶è§¦å‘ Thinca->initAuth()
 
-<i>Thinca²ãµÄhttps-certificate-pass ¹Ì¶¨»áÎª 57291337 (env.json thincapayment.ca_file ("?A<C;==A")  ÖğÎ» (0x55 + x - 0x20) % 0x5F + 0x20 µÃµ½</i>
+<i>Thincaå±‚çš„https-certificate-pass å›ºå®šä¼šä¸º 57291337 (env.json thincapayment.ca_file ("?A<C;==A")  é€ä½ (0x55 + x - 0x20) % 0x5F + 0x20 å¾—åˆ°</i>
 
-<b>×¢Òâ:ËùÓĞµÄThincaÇëÇó ±ØĞëÍ¨¹ıÌØÖÆTCAP°üÍ¨Ñ¶²ÅÄÜ»ñµÃÊ¶±ğ»úÆ÷µÄ²ÎÊı£¬ÆäËûÎ»ÖÃ(header body)¾ùÎŞ²ÎÊı¡£</b>
+<b>æ³¨æ„:æ‰€æœ‰çš„Thincaè¯·æ±‚ å¿…é¡»é€šè¿‡ç‰¹åˆ¶TCAPåŒ…é€šè®¯æ‰èƒ½è·å¾—è¯†åˆ«æœºå™¨çš„å‚æ•°ï¼Œå…¶ä»–ä½ç½®(header body)å‡æ— å‚æ•°ã€‚</b>
 
-¿Í»§»ú´ËÊ±»á¿ªÊ¼ÇëÇó \{commonPrimaryUri\}/initAuth.jsp (TLAM Metadata) <br/> \{commonPrimaryUri\} Îª tfps-res-pro/resource.xml µÄ /thincaResource/common/commonPrimaryUri
+å®¢æˆ·æœºæ­¤æ—¶ä¼šå¼€å§‹è¯·æ±‚ \{commonPrimaryUri\}/initAuth.jsp (TLAM Metadata) <br/> \{commonPrimaryUri\} ä¸º tfps-res-pro/resource.xml çš„ /thincaResource/common/commonPrimaryUri
 
-´ËÊ±ĞèÒª»Ø¸´TCAPÍ¨Ñ¶µØÖ·£¬ÒÔ±¾ÏîÄ¿ÎªÀıµÄÄÚÈİÈçÏÂ£º
+æ­¤æ—¶éœ€è¦å›å¤TCAPé€šè®¯åœ°å€ï¼Œä»¥æœ¬é¡¹ç›®ä¸ºä¾‹çš„å†…å®¹å¦‚ä¸‹ï¼š
 	
 	SERV=http://127.0.0.1/thinca/common-shop/stage2
-	//´ËÊ±Ò²¿É½«SERV»»³ÉCOMM£¬µ«ÕâÑùÇëÇóµÄ»°ĞèÒªËùÓĞµÄÇëÇó°üHeader¶¼¸ÄÎª0201
-	//ÓÎÏ·ÒÔµÚÒ»¸ö¶Áµ½µÄµØÖ·Îª×¼£¬Í¬Ê±·ÅÖÃÁ½¸öÎŞĞ§
-	//Õâ¸ö°üĞèÒªÉèÖÃContent-Type : "application/x-tlam" ·ñÔò²»ÈÏ¡£
+	//æ­¤æ—¶ä¹Ÿå¯å°†SERVæ¢æˆCOMMï¼Œä½†è¿™æ ·è¯·æ±‚çš„è¯éœ€è¦æ‰€æœ‰çš„è¯·æ±‚åŒ…Headeréƒ½æ”¹ä¸º0201
+	//æ¸¸æˆä»¥ç¬¬ä¸€ä¸ªè¯»åˆ°çš„åœ°å€ä¸ºå‡†ï¼ŒåŒæ—¶æ”¾ç½®ä¸¤ä¸ªæ— æ•ˆ
+	//è¿™ä¸ªåŒ…éœ€è¦è®¾ç½®Content-Type : "application/x-tlam" å¦åˆ™ä¸è®¤ã€‚
 
-¿Í»§»úÇëÇó¸ÃµØÖ·´¥·¢TCAPÍ¨Ñ¶¡£
+å®¢æˆ·æœºè¯·æ±‚è¯¥åœ°å€è§¦å‘TCAPé€šè®¯ã€‚
 
-	µÚÒ»×é°ü±ØÈ»ÎªHandshake£¬·µ»ØHandshakeAccept°ü¡£
-	Íê³ÉHandshakeºó£¬¿Í»§»ú×ªÈëIdle×´Ì¬£¬´ËÊ±±ØÈ»·¢ËÍ¿Õ£¬´ËÊ±·µ»ØOperateDeviceMessage°ü»ñÈ¡»úÆ÷²ÎÊı²¢ÉèÖÃ»úÆ÷×´Ì¬¡£
-	OperateDeviceMessage°ü±ØÈ»»áÓĞ·µ»Ø£¬Íê³ÉËùÓĞÉèÖÃÒÔºó¼´¿É·¢ËÍFarewell°üÍê³ÉTCAPÍ¨Ñ¶¡£
+	ç¬¬ä¸€ç»„åŒ…å¿…ç„¶ä¸ºHandshakeï¼Œè¿”å›HandshakeAcceptåŒ…ã€‚
+	å®ŒæˆHandshakeåï¼Œå®¢æˆ·æœºè½¬å…¥IdleçŠ¶æ€ï¼Œæ­¤æ—¶å¿…ç„¶å‘é€ç©ºï¼Œæ­¤æ—¶è¿”å›OperateDeviceMessageåŒ…è·å–æœºå™¨å‚æ•°å¹¶è®¾ç½®æœºå™¨çŠ¶æ€ã€‚
+	OperateDeviceMessageåŒ…å¿…ç„¶ä¼šæœ‰è¿”å›ï¼Œå®Œæˆæ‰€æœ‰è®¾ç½®ä»¥åå³å¯å‘é€FarewellåŒ…å®ŒæˆTCAPé€šè®¯ã€‚
 
-	×¢Òâ:Ö»ÓĞÕâÀï(Í¨¹ıOperateDeviceMessage REQUEST°ü)¿ÉÒÔ»ñµÃ»úÆ÷²ÎÊı£¡
+	æ³¨æ„:åªæœ‰è¿™é‡Œ(é€šè¿‡OperateDeviceMessage REQUESTåŒ…)å¯ä»¥è·å¾—æœºå™¨å‚æ•°ï¼
 
-	ËùÓĞµÄTCAP°ü¶¼ÒªÉèÖÃ Content-Type : "application/x-tcap" ·ñÔò²»ÈÏ¡£
+	æ‰€æœ‰çš„TCAPåŒ…éƒ½è¦è®¾ç½® Content-Type : "application/x-tcap" å¦åˆ™ä¸è®¤ã€‚
 
-´ËÊ±»úÆ÷(Í¨¹ıOperateDeviceMessage REQUEST°ü)ÇëÇóµÄAdditionalSecurityÄÚÈİ
+æ­¤æ—¶æœºå™¨(é€šè¿‡OperateDeviceMessage REQUESTåŒ…)è¯·æ±‚çš„AdditionalSecurityå†…å®¹
 
 	<request service="DirectIO"
-		xmlns="http://www.hp.com/jp/FeliCa/ICASClient">	//×¢ÒâÕâ¸öxmlns,²»ÉèÖÃNamespaceµÄ»°XPath×ß²»Í¨
+		xmlns="http://www.hp.com/jp/FeliCa/ICASClient">	//æ³¨æ„è¿™ä¸ªxmlns,ä¸è®¾ç½®Namespaceçš„è¯XPathèµ°ä¸é€š
 		<userdata>
 			<properties>
 				<longValue name="ServiceObjectVersion" value="240"/>
@@ -132,94 +132,94 @@
 
 
 	{
-		"UniqueCode":"ACAE01A9999",	//»ù±¾ÉÏÖ»ÄÜÔÚÕâ¶ÁµÄµ½
-		"PassPhrase":"ase114514",	//ÊÚÈ¨¿¨Àï´æµÄÃÜÂë
+		"UniqueCode":"ACAE01A9999",	//åŸºæœ¬ä¸Šåªèƒ½åœ¨è¿™è¯»çš„åˆ°
+		"PassPhrase":"ase114514",	//æˆæƒå¡é‡Œå­˜çš„å¯†ç 
 		"ServiceBranchNo":14,
 		"GoodsCode":"0990"
 	} 
 
-Èç´Ë´¦°ü¸ñÊ½³öÏÖ´íÎó£¨ÎŞ·¨½âÎö°ü¡¢²ÎÊı²»¹æ·¶µÈ£©£¬ÓÎÏ·»á·¢»ØError°ü£¬Í¬Ê±»úÆ÷½ĞÈıÉù£¬ÌáÊ¾×¢²áÊ§°Ü¡£
+å¦‚æ­¤å¤„åŒ…æ ¼å¼å‡ºç°é”™è¯¯ï¼ˆæ— æ³•è§£æåŒ…ã€å‚æ•°ä¸è§„èŒƒç­‰ï¼‰ï¼Œæ¸¸æˆä¼šå‘å›ErroråŒ…ï¼ŒåŒæ—¶æœºå™¨å«ä¸‰å£°ï¼Œæç¤ºæ³¨å†Œå¤±è´¥ã€‚
 
-ÈçÎ´ÕıÈ·Í¨¹ıOperateDeviceMessageÉèÖÃ»úÆ÷×´Ì¬£¬Í¬Ñù»áÒı·¢Thinca²ãÒònullptr access±¨´í£¬»òÎŞ·¨½øÈë³É¹¦×´Ì¬µ¼ÖÂ¶Á¿¨Æ÷ÉÁÀ¶µÆ£¨»Øµ½¿ªÍ·£©¡£
+å¦‚æœªæ­£ç¡®é€šè¿‡OperateDeviceMessageè®¾ç½®æœºå™¨çŠ¶æ€ï¼ŒåŒæ ·ä¼šå¼•å‘Thincaå±‚å› nullptr accessæŠ¥é”™ï¼Œæˆ–æ— æ³•è¿›å…¥æˆåŠŸçŠ¶æ€å¯¼è‡´è¯»å¡å™¨é—ªè“ç¯ï¼ˆå›åˆ°å¼€å¤´ï¼‰ã€‚
 
-Íê³ÉÒÔÉÏ²½ÖèÒÔ¼°»ñÈ¡Ö§¸¶µØÖ·Ö®ºó£¬»úÌ¨½«ÒÔÉÏÏà¹Ø²ÎÊıĞ´ÈëNVRAM(sysfile.dat 0x2000Î»ÖÃ)£¬»Øµ½µç×ÓÖ§¸¶ĞÅÏ¢²Ëµ¥£¬´ËÊ±ÄÜ¿´µ½IDºÍÖ§³ÖBrand£¬Íê³É×¢²á¡£
+å®Œæˆä»¥ä¸Šæ­¥éª¤ä»¥åŠè·å–æ”¯ä»˜åœ°å€ä¹‹åï¼Œæœºå°å°†ä»¥ä¸Šç›¸å…³å‚æ•°å†™å…¥NVRAM(sysfile.dat 0x2000ä½ç½®)ï¼Œå›åˆ°ç”µå­æ”¯ä»˜ä¿¡æ¯èœå•ï¼Œæ­¤æ—¶èƒ½çœ‹åˆ°IDå’Œæ”¯æŒBrandï¼Œå®Œæˆæ³¨å†Œã€‚
 
-## »ñÈ¡Ö§¸¶ApiµØÖ·
+## è·å–æ”¯ä»˜Apiåœ°å€
 
-Íê³ÉinitAuth.jspºó£¨ÒÔ¼°Ã¿´Î¿ª»úµÄÊ±ºò£©£¬»úÌ¨»áÇëÇó \{commonPrimaryUri\}/emlist.jsp ÓÃÓÚ»ñÈ¡¸¶¿îApi£¬Á÷³ÌºÍinitAuth.jspÒ»Ñù¡£<br/>
-<b>×¢Òâ£ºÈç¹ûÏëÔÚºóÃæµÄÖ§¸¶»·½Ú»ñµÃÊ¶±ğ»úÌ¨µÄ·½Ê½£¬´ËÊ±ÏÂ·¢µÄURL±ØĞë°üº¬ÄÜÊ¶±ğ»úÌ¨µÄ²ÎÊı¡£</b>
+å®ŒæˆinitAuth.jspåï¼ˆä»¥åŠæ¯æ¬¡å¼€æœºçš„æ—¶å€™ï¼‰ï¼Œæœºå°ä¼šè¯·æ±‚ \{commonPrimaryUri\}/emlist.jsp ç”¨äºè·å–ä»˜æ¬¾Apiï¼Œæµç¨‹å’ŒinitAuth.jspä¸€æ ·ã€‚<br/>
+<b>æ³¨æ„ï¼šå¦‚æœæƒ³åœ¨åé¢çš„æ”¯ä»˜ç¯èŠ‚è·å¾—è¯†åˆ«æœºå°çš„æ–¹å¼ï¼Œæ­¤æ—¶ä¸‹å‘çš„URLå¿…é¡»åŒ…å«èƒ½è¯†åˆ«æœºå°çš„å‚æ•°ã€‚</b>
 
-´ËÊ±(Í¨¹ıOperateDeviceMessage REQUEST°ü)ÇëÇóµÄAdditionalSecurityÄÚÈİ
+æ­¤æ—¶(é€šè¿‡OperateDeviceMessage REQUESTåŒ…)è¯·æ±‚çš„AdditionalSecurityå†…å®¹
 
 	{
 		"ServiceBranchNo":2,
-		"TermSerial":"ACAE01A9999" //Ö»ÓĞÕâÀïÄÜ¶Áµ½»úÆ÷ĞòÁĞºÅÁË
-					//ÔÙ²»ÄÃ³öÀ´ÉèÖÃÒÔºó¾Í¼û²»µ½ÁË
+		"TermSerial":"ACAE01A9999" //åªæœ‰è¿™é‡Œèƒ½è¯»åˆ°æœºå™¨åºåˆ—å·äº†
+					//å†ä¸æ‹¿å‡ºæ¥è®¾ç½®ä»¥åå°±è§ä¸åˆ°äº†
 	}
 
-<i>TCAP°üÁ÷³Ì½¨ÒéÖ±½Ó¿´´úÂë£¬ÕâÒªÊÇÃ¿¸ö°ü¶¼Ğ´³öÀ´ÕâÍæÒâÒªÈû±¬</i>
+<i>TCAPåŒ…æµç¨‹å»ºè®®ç›´æ¥çœ‹ä»£ç ï¼Œè¿™è¦æ˜¯æ¯ä¸ªåŒ…éƒ½å†™å‡ºæ¥è¿™ç©æ„è¦å¡çˆ†</i>
 
-## Ö§¸¶Á÷³Ì
-ÓÎÏ·µ¯³öÍ¶±ÒÌáÊ¾ºó¾Í»á¿ªÊ¼µ÷ÓÃÖ§¸¶Á÷³Ì¡£<br /><i>Èç¹û²»Ìø£¨±ÈÈçÖ»ÈÃÄãÍ¶±Ò£©£¬¼ì²éterminals»Ø´«µÄjsonÓĞÃ»ÓĞÉèÖÃstatusÎª10</i>
+## æ”¯ä»˜æµç¨‹
+æ¸¸æˆå¼¹å‡ºæŠ•å¸æç¤ºåå°±ä¼šå¼€å§‹è°ƒç”¨æ”¯ä»˜æµç¨‹ã€‚<br /><i>å¦‚æœä¸è·³ï¼ˆæ¯”å¦‚åªè®©ä½ æŠ•å¸ï¼‰ï¼Œæ£€æŸ¥terminalså›ä¼ çš„jsonæœ‰æ²¡æœ‰è®¾ç½®statusä¸º10</i>
 
-´ËÊ±¸ù¾İÑ¡ÔñµÄBrandÀàĞÍ£¬ÓÎÏ·¿ªÊ¼ÇëÇóemlist.jspÊ±»ñÈ¡µÄµØÖ·(TLAM Metadata ±ğÍüÁËÉèÖÃContentType)£¬Ò»ÑùÏÈ»Ø¸´TCAPÍ¨Ñ¶µØÖ·¡£
+æ­¤æ—¶æ ¹æ®é€‰æ‹©çš„Brandç±»å‹ï¼Œæ¸¸æˆå¼€å§‹è¯·æ±‚emlist.jspæ—¶è·å–çš„åœ°å€(TLAM Metadata åˆ«å¿˜äº†è®¾ç½®ContentType)ï¼Œä¸€æ ·å…ˆå›å¤TCAPé€šè®¯åœ°å€ã€‚
 
-È»ºó´¥·¢TCAPÍ¨Ñ¶¡£<b>ËùÓĞµÄÖ§¸¶Á÷³Ì¶¼ÔÚTCAP²ãÍê³ÉÈ»ºó´øReceipt·µ»ØÓÎÏ·£¬²»´øReceipt·µ»ØÖ»»áÈÃÓÎÏ·ÖØĞÂ¿ªÊ¼Ö§¸¶Á÷³Ì¡£</b>
+ç„¶åè§¦å‘TCAPé€šè®¯ã€‚<b>æ‰€æœ‰çš„æ”¯ä»˜æµç¨‹éƒ½åœ¨TCAPå±‚å®Œæˆç„¶åå¸¦Receiptè¿”å›æ¸¸æˆï¼Œä¸å¸¦Receiptè¿”å›åªä¼šè®©æ¸¸æˆé‡æ–°å¼€å§‹æ”¯ä»˜æµç¨‹ã€‚</b>
 
-	µÚÒ»×é±ØÈ»Handshake£¬·µ»ØHandshakeAccept
-	µÚ¶ş×é±ØÎª¿Õ£¬Ê¹ÓÃOperateDeviceMessage°ü¿ªÊ¼µ÷ÓÃ¶Á¿¨Æ÷/VFDÏÔÊ¾Ë¢¿¨ĞÅÏ¢
-	OperateDeviceMessage±ØÈ»»áÓĞ·µ»Ø£¬½âÎö·µ»Ø½á¹ûÀ´»ñÈ¡¿¨ºÅ/SeqNumber/Ö§¸¶¶î£¬Í¨¹ıOperateDeviceMessage·µ»ØÖ§¸¶×´Ì¬°ü(Ïàµ±ÓÚReceipt)
-	ÍêÊÂÒÔºó·µ»ØFarewell°üÍê³ÉTCAPÍ¨Ñ¶
+	ç¬¬ä¸€ç»„å¿…ç„¶Handshakeï¼Œè¿”å›HandshakeAccept
+	ç¬¬äºŒç»„å¿…ä¸ºç©ºï¼Œä½¿ç”¨OperateDeviceMessageåŒ…å¼€å§‹è°ƒç”¨è¯»å¡å™¨/VFDæ˜¾ç¤ºåˆ·å¡ä¿¡æ¯
+	OperateDeviceMessageå¿…ç„¶ä¼šæœ‰è¿”å›ï¼Œè§£æè¿”å›ç»“æœæ¥è·å–å¡å·/SeqNumber/æ”¯ä»˜é¢ï¼Œé€šè¿‡OperateDeviceMessageè¿”å›æ”¯ä»˜çŠ¶æ€åŒ…(ç›¸å½“äºReceipt)
+	å®Œäº‹ä»¥åè¿”å›FarewellåŒ…å®ŒæˆTCAPé€šè®¯
 
-´ËÊ±ÇëÇóOperateDeviceMessage REQUEST»ñÈ¡µ½µÄÄÚÈİ:
+æ­¤æ—¶è¯·æ±‚OperateDeviceMessage REQUESTè·å–åˆ°çš„å†…å®¹:
 	
 	<request service="AuthorizeSales"
 		xmlns="http://www.hp.com/jp/FeliCa/ICASClient">
 		<userdata>
 			<properties>
 				<longValue name="ServiceObjectVersion" value="240"/>
-				<longValue name="PaymentMedia" value="8"/>		//BrandID ±ÈÈçÕâÀïÊÇpaseli
+				<longValue name="PaymentMedia" value="8"/>		//BrandID æ¯”å¦‚è¿™é‡Œæ˜¯paseli
 				<boolValue name="AsyncMode" value="true"/>
 				<boolValue name="TrainingMode" value="false"/>
 				<stringValue name="AdditionalSecurityInformation" value="{&quot;ServiceBranchNo&quot;:2,&quot;GoodsCode&quot;:&quot;0990&quot;}"/>
 			</properties>
 			<parameters>
-				<longValue name="SequenceNumber" value="51"/>		//SeqNumber£¬×÷Çø·ÖÇëÇóÓÃ
-				<currencyValue name="Amount" value="100"/>		//Ö§¸¶¶î
+				<longValue name="SequenceNumber" value="51"/>		//SeqNumberï¼Œä½œåŒºåˆ†è¯·æ±‚ç”¨
+				<currencyValue name="Amount" value="100"/>		//æ”¯ä»˜é¢
 				<currencyValue name="TaxOthers" value="0"/>
 				<longValue name="Timeout" value="1000"/>
 			</parameters>
 		</userdata>
 	</request>
 
-Aime¶Á¿¨Æ÷¶Á¿¨±ØÈ»´ø×èÈû£¬ÒªÃ´´ø¿¨ºÅ·µ»Ø£¬ÒªÃ´ÒòÎª³¬Ê±·¢ËÍ¿Õ°ü¡£×¢ÒâÈç¹û³¬Ê±Ê±¼ä¹ı³¤»á³öÏÖÓÎÏ·µÈamd·µ»ØµÄÇé¿ö¡£
+Aimeè¯»å¡å™¨è¯»å¡å¿…ç„¶å¸¦é˜»å¡ï¼Œè¦ä¹ˆå¸¦å¡å·è¿”å›ï¼Œè¦ä¹ˆå› ä¸ºè¶…æ—¶å‘é€ç©ºåŒ…ã€‚æ³¨æ„å¦‚æœè¶…æ—¶æ—¶é—´è¿‡é•¿ä¼šå‡ºç°æ¸¸æˆç­‰amdè¿”å›çš„æƒ…å†µã€‚
 
-TCAPÍ¨Ñ¶½áÊøÊ±ÓÎÏ·»á¸ù¾İ½á¹û¾ö¶¨ÊÇÖØĞÂÇëÇó or ·µ»ØÉÏÒ»²ã or ¼ÇÂ¼Ö§¸¶ĞÅÏ¢²¢Í¶±Ò¡£
+TCAPé€šè®¯ç»“æŸæ—¶æ¸¸æˆä¼šæ ¹æ®ç»“æœå†³å®šæ˜¯é‡æ–°è¯·æ±‚ or è¿”å›ä¸Šä¸€å±‚ or è®°å½•æ”¯ä»˜ä¿¡æ¯å¹¶æŠ•å¸ã€‚
 
-<i>ÕâÒ»²¿·ÖÒ²½¨ÒéÖ±½Ó¿´´úÂë</i>
+<i>è¿™ä¸€éƒ¨åˆ†ä¹Ÿå»ºè®®ç›´æ¥çœ‹ä»£ç </i>
 
-## ¹ØÓÚBrandID
-ThincaºÍSEGAYÊ¹ÓÃµÄBrand ID»áÓĞÒ»Ğ©²»Í¬
+## å…³äºBrandID
+Thincaå’ŒSEGAYä½¿ç”¨çš„Brand IDä¼šæœ‰ä¸€äº›ä¸åŒ
 
 		(SEGA)	(THINCA)
 	Nanaco:	1	1
 	Edy:	2	2
 	Id:	3	3
-	½»Í¨¿¨:	4	5
+	äº¤é€šå¡:	4	5
 	WAON:	5	6
 	PASELI:	6	8
 	SAPICA:	7	7(NANACO2)
 	NUM:	8	9(SAPICA)
 
-	QuicPay	(²»Ö§³Ö)	4
+	QuicPay	(ä¸æ”¯æŒ)	4
 
-## ¹ØÓÚTCAP°ü
-TCAP°üµÄ¸ñÊ½ÈçÏÂ£º<br/><b>ËùÓĞÉæ¼°µ½Êı×ÖµÄÎ»ÖÃ¾ùÎª´ó¶ËĞò </b>
+## å…³äºTCAPåŒ…
+TCAPåŒ…çš„æ ¼å¼å¦‚ä¸‹ï¼š<br/><b>æ‰€æœ‰æ¶‰åŠåˆ°æ•°å­—çš„ä½ç½®å‡ä¸ºå¤§ç«¯åº </b>
 
-	(02 05)(ÀàĞÍ 1byte)(bodyµÄ×Ü³¤¶È 2byte)(body ?byte)
-	//Èç¹ûÄãÔÚTLAMÇëÇóÊ± ·µ»ØµÄÊÇCOMM¶ø²»ÊÇSERV£¬´ËÊ±ËùÓĞÇëÇó°üÍ·Ó¦¸ÄÎª02 01
+	(02 05)(ç±»å‹ 1byte)(bodyçš„æ€»é•¿åº¦ 2byte)(body ?byte)
+	//å¦‚æœä½ åœ¨TLAMè¯·æ±‚æ—¶ è¿”å›çš„æ˜¯COMMè€Œä¸æ˜¯SERVï¼Œæ­¤æ—¶æ‰€æœ‰è¯·æ±‚åŒ…å¤´åº”æ”¹ä¸º02 01
 
-	¿ÉÓÃµÄÀàĞÍÈçÏÂ£º
+	å¯ç”¨çš„ç±»å‹å¦‚ä¸‹ï¼š
 	01 : Handshake
 	02 : Farewell
 	03 : Error
@@ -227,27 +227,27 @@ TCAP°üµÄ¸ñÊ½ÈçÏÂ£º<br/><b>ËùÓĞÉæ¼°µ½Êı×ÖµÄÎ»ÖÃ¾ùÎª´ó¶ËĞò </b>
 	05 : UpdateEntity
 	06 : OperateEntity
 
-	TCAPÔÊĞíÒ»¸ö°üÈûÊı¸öbody£¬Ö»Òª¶¼ÊôÓÚÍ¬Ò»¸öÀàĞÍ
+	TCAPå…è®¸ä¸€ä¸ªåŒ…å¡æ•°ä¸ªbodyï¼Œåªè¦éƒ½å±äºåŒä¸€ä¸ªç±»å‹
 
-Body°üµÄ¸ñÊ½ÈçÏÂ£º
+BodyåŒ…çš„æ ¼å¼å¦‚ä¸‹ï¼š
 	
 	(methodLo 1byte) (paramLo 1byte) (paramHi 1byte) (methodHi 1byte) (messageBodyLength 2byte) (message ?byte)
 
-	methodLo | methodHi ×é³É Int16 ×÷Îª method£¬¿ÉÓÃµÄmethodÈçÏÂ:
-	00 Default:(ÆäËû°üParseÊ§°ÜÊ±»ØÂä)
-		00 00 : RequestMessage (²»¿ÉÒÔÓĞmessage)
+	methodLo | methodHi ç»„æˆ Int16 ä½œä¸º methodï¼Œå¯ç”¨çš„methodå¦‚ä¸‹:
+	00 Default:(å…¶ä»–åŒ…Parseå¤±è´¥æ—¶å›è½)
+		00 00 : RequestMessage (ä¸å¯ä»¥æœ‰message)
 		00 01 : RequestWarningMessage
-		ÆäËû  : RequestUnknownMessage 
+		å…¶ä»–  : RequestUnknownMessage 
 
-	01 Handshake:	(±ØĞë°´ 23 -> 81 -> 24 µÄË³Ğò£¬·ñÔò±¨´í)
-		00 23 : RequestMessage	(²»¿ÉÒÔÓĞmessage)
-		00 24 : RequestMessage	(²»¿ÉÒÔÓĞmessage)
-		00 81 : RequestAcceptMessage (message±ØĞëÎª 02 05 00)
+	01 Handshake:	(å¿…é¡»æŒ‰ 23 -> 81 -> 24 çš„é¡ºåºï¼Œå¦åˆ™æŠ¥é”™)
+		00 23 : RequestMessage	(ä¸å¯ä»¥æœ‰message)
+		00 24 : RequestMessage	(ä¸å¯ä»¥æœ‰message)
+		00 81 : RequestAcceptMessage (messageå¿…é¡»ä¸º 02 05 00)
 
-	02 Farewell:	(±ØĞë°´ 23 -> 25 -> 24 µÄË³Ğò£¬·ñÔò±¨´í)
-		00 23 : RequestServerGoodByeMessage (²»¿ÉÒÔÓĞmessage)
-		00 24 : RequestServerGoodByeDoneMessage (²»¿ÉÒÔÓĞmessage)
-		00 25 : RequestReturnCodeMessage (message¹Ì¶¨Îª4Î»byte ×é³Éreturn code)
+	02 Farewell:	(å¿…é¡»æŒ‰ 23 -> 25 -> 24 çš„é¡ºåºï¼Œå¦åˆ™æŠ¥é”™)
+		00 23 : RequestServerGoodByeMessage (ä¸å¯ä»¥æœ‰message)
+		00 24 : RequestServerGoodByeDoneMessage (ä¸å¯ä»¥æœ‰message)
+		00 25 : RequestReturnCodeMessage (messageå›ºå®šä¸º4ä½byte ç»„æˆreturn code)
 
 	03 Error:
 		00 21 : RequestPacketFormatErrorMessage
@@ -255,27 +255,27 @@ Body°üµÄ¸ñÊ½ÈçÏÂ£º
 		00 23 : RequestUnexpectedErrorMessage
 
 	04 AppDataTransfer:
-		01 01 : RequestFelicaCommandMessage (ĞèÒªÓĞ1~255byteÄÚµÄmessage)
-		01 04 : RequestFelicaPrecommandMessage (ĞèÒªÓĞ1~255byteÄÚµÄmessage)
-		01 05 : RequestFelicaExcommandMessage (ĞèÒªÓĞ3~255byteÄÚµÄmessage)
-		01 06 : RequestFelicaCommandThrurwMessage  (ĞèÒªÓĞ3~255byteÄÚµÄmessage)
-		01 09 : RequestFelicaPrecommandThrurwMessage (ĞèÒªÓĞ4~255byteÄÚµÄmessage)
-		01 0A : RequestFelicaExcommandThrurwMessage (ĞèÒªÓĞ4~255byteÄÚµÄmessage)
+		01 01 : RequestFelicaCommandMessage (éœ€è¦æœ‰1~255byteå†…çš„message)
+		01 04 : RequestFelicaPrecommandMessage (éœ€è¦æœ‰1~255byteå†…çš„message)
+		01 05 : RequestFelicaExcommandMessage (éœ€è¦æœ‰3~255byteå†…çš„message)
+		01 06 : RequestFelicaCommandThrurwMessage  (éœ€è¦æœ‰3~255byteå†…çš„message)
+		01 09 : RequestFelicaPrecommandThrurwMessage (éœ€è¦æœ‰4~255byteå†…çš„message)
+		01 0A : RequestFelicaExcommandThrurwMessage (éœ€è¦æœ‰4~255byteå†…çš„message)
 
-	05 UpdateEntity: (½ÓÊÜºóËæÏÂÒ»¸ö°ü·µ»Ø)
-		00 30 : RequestRequestIdMessage (2byte message£¬»Ø´«ÄÚÈİºÍmessageÒ»ÖÂ)
+	05 UpdateEntity: (æ¥å—åéšä¸‹ä¸€ä¸ªåŒ…è¿”å›)
+		00 30 : RequestRequestIdMessage (2byte messageï¼Œå›ä¼ å†…å®¹å’Œmessageä¸€è‡´)
 		00 81 : RequestSetNetworkTimeoutMessage (4byte message)
-		01 01 : RequestFelicaSelectInternalMessage (²»¿É´«message)
+		01 01 : RequestFelicaSelectInternalMessage (ä¸å¯ä¼ message)
 		01 81 : RequestFelicaSetTimeoutMessage (4byte message)
 		01 82 : RequestFelicaSetRetryCountMessage (4byte message)
 
-	06 OperateEntity: (½ÓÊÜºóËæÏÂÒ»¸ö°ü·µ»Ø) (ĞèÒª paramLo | paramHi = param)
-		00 25 : RequestOperateDeviceMessage (Õâ¸ö°üÏÂÃæ½²£©
-		00 81 : RequestPlaySoundMessage (²»´¦Àí²ÎÊı)
-		01 01 : RequestFelicaOpenRwRequestMessage (²»¿É´«message£¬param ±ØĞëÎª00 04)
-		01 05 : RequestFelicaCloseRwRequestMessage (²»¿É´«message£¬param ±ØĞëÎª00 04)
+	06 OperateEntity: (æ¥å—åéšä¸‹ä¸€ä¸ªåŒ…è¿”å›) (éœ€è¦ paramLo | paramHi = param)
+		00 25 : RequestOperateDeviceMessage (è¿™ä¸ªåŒ…ä¸‹é¢è®²ï¼‰
+		00 81 : RequestPlaySoundMessage (ä¸å¤„ç†å‚æ•°)
+		01 01 : RequestFelicaOpenRwRequestMessage (ä¸å¯ä¼ messageï¼Œparam å¿…é¡»ä¸º00 04)
+		01 05 : RequestFelicaCloseRwRequestMessage (ä¸å¯ä¼ messageï¼Œparam å¿…é¡»ä¸º00 04)
 
-¿Í»§»úÇëÇó·şÎñÆ÷µÄ°ü³ıBody°ü»á³öÏÖµÄmethodÍâ£¬»¹»áÓĞÒÔÏÂÇé¿ö£º
+å®¢æˆ·æœºè¯·æ±‚æœåŠ¡å™¨çš„åŒ…é™¤BodyåŒ…ä¼šå‡ºç°çš„methodå¤–ï¼Œè¿˜ä¼šæœ‰ä»¥ä¸‹æƒ…å†µï¼š
 	
 	00 Default:
 		00 00 : ResponseFinishedMessage
@@ -287,23 +287,23 @@ Body°üµÄ¸ñÊ½ÈçÏÂ£º
 	02 Farewell:
 		00 21 : ResponseClientGoodByeMessage
 		00 22 : ResponseClientGoodByeDoneMessage 
-	?? (ÆäËûÎÒÃ»ÕÒ³öÀ´ÔÚÄÄ¸öÀàĞÍµÄ):
+	?? (å…¶ä»–æˆ‘æ²¡æ‰¾å‡ºæ¥åœ¨å“ªä¸ªç±»å‹çš„):
 		00 02 : ResponseFelicaOpenRwStatusMessage/ResponseFelicaResponseMessage
 		00 03 : ResponseFelicaSelectedDeviceMessage/ResponseFelicaErrorMessage
 		00 06 : ResponseFelicaCloseRwStatusMessage
 		00 07 : ResponseFelicaResponseThrurwMessage
 		00 08 : ResponseFelicaErrorThrurwMessage
 
-ÒòÎª¿Í»§»úÇëÇó°ü¸ñÊ½ºÍ·şÎñÆ÷»Ø´«°ü¸ñÊ½Ò»ÖÂ£¬¿ÉÒÔÖ±½ÓParseºó»ñµÃ¿Í»§»úµÄÇëÇóĞÅÏ¢£¬ÓÈÆäÊÇ ResponseDevicesMessage »á°üº¬¿ÉÓÃÓÚOperateDeviceMessageµÄ²ÎÊı£¬ÓĞÄÜÁ¦¿ÉÒÔ´¦ÀíÒ»ÏÂ¡£		
+å› ä¸ºå®¢æˆ·æœºè¯·æ±‚åŒ…æ ¼å¼å’ŒæœåŠ¡å™¨å›ä¼ åŒ…æ ¼å¼ä¸€è‡´ï¼Œå¯ä»¥ç›´æ¥Parseåè·å¾—å®¢æˆ·æœºçš„è¯·æ±‚ä¿¡æ¯ï¼Œå°¤å…¶æ˜¯ ResponseDevicesMessage ä¼šåŒ…å«å¯ç”¨äºOperateDeviceMessageçš„å‚æ•°ï¼Œæœ‰èƒ½åŠ›å¯ä»¥å¤„ç†ä¸€ä¸‹ã€‚		
 
-## ¹ØÓÚOperateEntity:RequestOperateDeviceMessage
-OperateDeviceMessage¿ÉÒÔÖ±½Ó²Ù×÷ResponseDevicesMessageËùÁĞ¾ÙµÄÉè±¸£¬ÓĞÊ±ºò²Ù×÷Ïà¹ØÉè±¸²ÅÄÜÍê³ÉÕû¸öÁ÷³Ì¡£
+## å…³äºOperateEntity:RequestOperateDeviceMessage
+OperateDeviceMessageå¯ä»¥ç›´æ¥æ“ä½œResponseDevicesMessageæ‰€åˆ—ä¸¾çš„è®¾å¤‡ï¼Œæœ‰æ—¶å€™æ“ä½œç›¸å…³è®¾å¤‡æ‰èƒ½å®Œæˆæ•´ä¸ªæµç¨‹ã€‚
 
-´ËÊ±messageµÄ¸ñÊ½Îª (COMMAND ³¤¶È 1byte)(COMMAND ×Ö·û´®)(00 00)(Payload ³¤¶È+2 2byte)(Payload ³¤¶È 2byte)(Payload ?byte) <br />
-Èç¹ûÃ»ÓĞPayload£¬Command½áÊøºóºó¸ú(00 00 00 00)¼´¿É¡£<br />
-ÓĞĞ©Command»áÒªÇóÊ¡ÂÔ(Payload³¤¶È + 2)²¿·Ö£¬ÏÂÃæ»á×¢Ã÷¡£
+æ­¤æ—¶messageçš„æ ¼å¼ä¸º (COMMAND é•¿åº¦ 1byte)(COMMAND å­—ç¬¦ä¸²)(00 00)(Payload é•¿åº¦+2 2byte)(Payload é•¿åº¦ 2byte)(Payload ?byte) <br />
+å¦‚æœæ²¡æœ‰Payloadï¼ŒCommandç»“æŸååè·Ÿ(00 00 00 00)å³å¯ã€‚<br />
+æœ‰äº›Commandä¼šè¦æ±‚çœç•¥(Payloadé•¿åº¦ + 2)éƒ¨åˆ†ï¼Œä¸‹é¢ä¼šæ³¨æ˜ã€‚
 
-ÒÔSEGAYÎªÀı£¬Ò»°ãResponseDevicesMessage»á·¢ËÍÒÔÏÂÉè±¸ĞÅÏ¢£º
+ä»¥SEGAYä¸ºä¾‹ï¼Œä¸€èˆ¬ResponseDevicesMessageä¼šå‘é€ä»¥ä¸‹è®¾å¤‡ä¿¡æ¯ï¼š
 
 	00 01 -> General Client
 	00 02 -> General Status
@@ -314,91 +314,91 @@ OperateDeviceMessage¿ÉÒÔÖ±½Ó²Ù×÷ResponseDevicesMessageËùÁĞ¾ÙµÄÉè±¸£¬ÓĞÊ±ºò²Ù×÷Ïà
 	00 07 -> Generic R/W Option
 	00 08 -> Gemeroc NFC RW
 
-ÔÚ¹¹ÔìOperateDeviceMessage°üµÄÊ±ºò£¬ËùÉèÖÃµÄparam´ú±í¶ÔÒÔÉÏÖ¸¶¨Éè±¸µÄ²Ù×÷¡£<br />
-<i>ËùÒÔRequestFelicaOpenRwRequestMessage ±ØĞëÉèÖÃparamÎª00 04,ÒòÎªÖ»¿ÉÄÜ¶ÔFelica R/W²Ù×÷</i>
+åœ¨æ„é€ OperateDeviceMessageåŒ…çš„æ—¶å€™ï¼Œæ‰€è®¾ç½®çš„paramä»£è¡¨å¯¹ä»¥ä¸ŠæŒ‡å®šè®¾å¤‡çš„æ“ä½œã€‚<br />
+<i>æ‰€ä»¥RequestFelicaOpenRwRequestMessage å¿…é¡»è®¾ç½®paramä¸º00 04,å› ä¸ºåªå¯èƒ½å¯¹Felica R/Wæ“ä½œ</i>
 
-ÒÔÏÂÊÇ²âÊÔ¿ÉÓÃµÄÇé¿ö
+ä»¥ä¸‹æ˜¯æµ‹è¯•å¯ç”¨çš„æƒ…å†µ
 
 	00 01 -> General Client
-		REQUEST: ·µ»Øµ±Ç°ÏµÍ³ĞÅÏ¢,XML¸ñÊ½.(ÆäÖĞ»á°üº¬AdditionalJsonµÈĞÅÏ¢£¬ºÜÖØÒª)£¬²»ÒªÇóPayload
-		CURRENT: ÉèÖÃÏµÍ³ĞÅÏ¢,XML¸ñÊ½.(ÓÃÓÚ¸üĞÂAdditionalJsonºÍ»Ø´«×´Ì¬ÂëµÈ£¬ºÜÖØÒª£©
-			(initAuthÊ±ºòPayloadÒªÇóÇ°¸ú(EF BB BF) 3 byte£¬PaymentÊ±²»ÒªÇó£©
-		RESULT: Ğ§¹ûºÍCURRENTÒ»ÖÂ
-		CANSEL: Î´Öª
-		TIMESTAMP: ·µ»ØÉè±¸²àµ±Ç°Ê±¼ä
-		WAIT: µÈ´ıÖ¸¶¨³¤¶ÈÊ±¼ä£¬PayloadÎª8byte Int64¡£
-		UNIXTIME: ·µ»ØÉè±¸²àUNIXÊ±¼ä´Á
-		UNIXTIMEWAIT: ¸ù¾İUNIXÊ±¼ä´ÁµÈ´ı£¬PayloadÎª10byte(8byte Int64)(2byte)
-		STATUS: ·µ»Ø illegal general client
+		REQUEST: è¿”å›å½“å‰ç³»ç»Ÿä¿¡æ¯,XMLæ ¼å¼.(å…¶ä¸­ä¼šåŒ…å«AdditionalJsonç­‰ä¿¡æ¯ï¼Œå¾ˆé‡è¦)ï¼Œä¸è¦æ±‚Payload
+		CURRENT: è®¾ç½®ç³»ç»Ÿä¿¡æ¯,XMLæ ¼å¼.(ç”¨äºæ›´æ–°AdditionalJsonå’Œå›ä¼ çŠ¶æ€ç ç­‰ï¼Œå¾ˆé‡è¦ï¼‰
+			(initAuthæ—¶å€™Payloadè¦æ±‚å‰è·Ÿ(EF BB BF) 3 byteï¼ŒPaymentæ—¶ä¸è¦æ±‚ï¼‰
+		RESULT: æ•ˆæœå’ŒCURRENTä¸€è‡´
+		CANSEL: æœªçŸ¥
+		TIMESTAMP: è¿”å›è®¾å¤‡ä¾§å½“å‰æ—¶é—´
+		WAIT: ç­‰å¾…æŒ‡å®šé•¿åº¦æ—¶é—´ï¼ŒPayloadä¸º8byte Int64ã€‚
+		UNIXTIME: è¿”å›è®¾å¤‡ä¾§UNIXæ—¶é—´æˆ³
+		UNIXTIMEWAIT: æ ¹æ®UNIXæ—¶é—´æˆ³ç­‰å¾…ï¼ŒPayloadä¸º10byte(8byte Int64)(2byte)
+		STATUS: è¿”å› illegal general client
 
 	00 02 -> General Status
-		STATUS: Ğ§¹ûÎ´Öª£¬PayloadÎª6byte(00 00)(00 02)(00 01)
+		STATUS: æ•ˆæœæœªçŸ¥ï¼ŒPayloadä¸º6byte(00 00)(00 02)(00 01)
 
 	00 03 -> General Option
-		STATUS: ´¥·¢ioEvent£¬PayloadÎª(00 00 00 00 00 00 00 00)(Ã÷ÎÄJson)
+		STATUS: è§¦å‘ioEventï¼ŒPayloadä¸º(00 00 00 00 00 00 00 00)(æ˜æ–‡Json)
 
-	00 05 -> Generic R/W Event (²Ù×÷Aime LED£©(¸ÃÀàĞÍ°üÒªÇóÊ¡ÂÔ(Payload³¤¶È + 2)²¿·Ö£¬·ñÔò¶ÁÈ¡»á´íÎ»)
-		CMD°üÈûÈÎÒâ¿É¶Á×Ö·û¼´¿É£¬³ÌĞò²»´¦Àí£¬µ«±ØĞëµÃÓĞ
-		Payload¸ñÊ½ÈçÏÂ:
-			(00 00)	//²»´¦Àí£¬Ìî³ä0
-			(03)	//±ØĞëÎª0x03£¬·ñÔò±¨´í
-			(03)	//ÑÕÉ«¿ØÖÆ£¬00:ºì,01:ÂÌ,02:À¶,03:°×
-			(00)	//ÏÔÊ¾·½Ê½¿ØÖÆ£¬00:³£ÁÁ£¬01:¹Ø±Õ£¬02:ÉÁË¸
-			(00 08)	//½ÓÏÂÀ´²¿·ÖµÄ³¤¶È£¬³£ÁÁ×´Ì¬×îÉÙÎª04£¬ÉÁË¸×´Ì¬×îÉÙÎª08
-			(00 00) //²»´¦Àí£¬Ìî³ä0
-			(13 88) //×ÜÁÁµÆÊ±¼ä(ºÁÃë)£¬´ËÊ±Îª5Ãë
-			(01 f4)	//ÁÁµÆÊ±¼ä(ºÁÃë)£¬´ËÊ±Îª500ºÁÃë
-			(01 f4) //ÃğµÆÊ±¼ä(ºÁÃë), ´ËÊ±Îª500ºÁÃë
+	00 05 -> Generic R/W Event (æ“ä½œAime LEDï¼‰(è¯¥ç±»å‹åŒ…è¦æ±‚çœç•¥(Payloadé•¿åº¦ + 2)éƒ¨åˆ†ï¼Œå¦åˆ™è¯»å–ä¼šé”™ä½)
+		CMDåŒ…å¡ä»»æ„å¯è¯»å­—ç¬¦å³å¯ï¼Œç¨‹åºä¸å¤„ç†ï¼Œä½†å¿…é¡»å¾—æœ‰
+		Payloadæ ¼å¼å¦‚ä¸‹:
+			(00 00)	//ä¸å¤„ç†ï¼Œå¡«å……0
+			(03)	//å¿…é¡»ä¸º0x03ï¼Œå¦åˆ™æŠ¥é”™
+			(03)	//é¢œè‰²æ§åˆ¶ï¼Œ00:çº¢,01:ç»¿,02:è“,03:ç™½
+			(00)	//æ˜¾ç¤ºæ–¹å¼æ§åˆ¶ï¼Œ00:å¸¸äº®ï¼Œ01:å…³é—­ï¼Œ02:é—ªçƒ
+			(00 08)	//æ¥ä¸‹æ¥éƒ¨åˆ†çš„é•¿åº¦ï¼Œå¸¸äº®çŠ¶æ€æœ€å°‘ä¸º04ï¼Œé—ªçƒçŠ¶æ€æœ€å°‘ä¸º08
+			(00 00) //ä¸å¤„ç†ï¼Œå¡«å……0
+			(13 88) //æ€»äº®ç¯æ—¶é—´(æ¯«ç§’)ï¼Œæ­¤æ—¶ä¸º5ç§’
+			(01 f4)	//äº®ç¯æ—¶é—´(æ¯«ç§’)ï¼Œæ­¤æ—¶ä¸º500æ¯«ç§’
+			(01 f4) //ç­ç¯æ—¶é—´(æ¯«ç§’), æ­¤æ—¶ä¸º500æ¯«ç§’
 
-	00 08 -> Generic NFC RW (²Ù×÷Aime¶Á¿¨Æ÷)(¸ÃÀàĞÍ°üÒªÇóÊ¡ÂÔ(Payload³¤¶È + 2)²¿·Ö£¬·ñÔò¶ÁÈ¡»á´íÎ»)
-		OPEN_RW: ¿ªÆô¶Á¿¨Æ÷(PayloadÎª3byte, (00 00)(01:Mifare Only?,08:Felica Only?,09:Both?))
-		CLOSE_RW: ¹Ø±Õ¶Á¿¨Æ÷(²»ÒªÇóPayload)
-		TARGET_DETECT: ¼ì²â¿¨Æ¬(Payload 4byte ×î³¤µÈ´ıÊ±¼ä(ºÁÃë))
-			´Ë·½·¨»áÈûËÀ£¬ÒªÃ´³¬Ê±ÒªÃ´¶Áµ½¿¨Æ¬ĞÅÏ¢
-		APDU_COMMAND:? (Payload ×îÉÙ3byte (code1)(code2 2byte)(data?) (ÆäÖĞcode2 + 3 <= length))
-		FELICA_COMMAND:? (Payload ×îÉÙ7byte (code1 4byte)(code2 1byte)(code3 3byte) (code3 + 7 <= length)
-		OPTION:? (Payload 6byte (code1 4byte)(code2 2byte) (code2 > 0 Ê±¿´ÆğÀ´»á·¢ÉúÊ²Ã´))
+	00 08 -> Generic NFC RW (æ“ä½œAimeè¯»å¡å™¨)(è¯¥ç±»å‹åŒ…è¦æ±‚çœç•¥(Payloadé•¿åº¦ + 2)éƒ¨åˆ†ï¼Œå¦åˆ™è¯»å–ä¼šé”™ä½)
+		OPEN_RW: å¼€å¯è¯»å¡å™¨(Payloadä¸º3byte, (00 00)(01:Mifare Only?,08:Felica Only?,09:Both?))
+		CLOSE_RW: å…³é—­è¯»å¡å™¨(ä¸è¦æ±‚Payload)
+		TARGET_DETECT: æ£€æµ‹å¡ç‰‡(Payload 4byte æœ€é•¿ç­‰å¾…æ—¶é—´(æ¯«ç§’))
+			æ­¤æ–¹æ³•ä¼šå¡æ­»ï¼Œè¦ä¹ˆè¶…æ—¶è¦ä¹ˆè¯»åˆ°å¡ç‰‡ä¿¡æ¯
+		APDU_COMMAND:? (Payload æœ€å°‘3byte (code1)(code2 2byte)(data?) (å…¶ä¸­code2 + 3 <= length))
+		FELICA_COMMAND:? (Payload æœ€å°‘7byte (code1 4byte)(code2 1byte)(code3 3byte) (code3 + 7 <= length)
+		OPTION:? (Payload 6byte (code1 4byte)(code2 2byte) (code2 > 0 æ—¶çœ‹èµ·æ¥ä¼šå‘ç”Ÿä»€ä¹ˆ))
 
-## ¹ØÓÚCURRENT ÉèÖÃµÄXmlºÍAdditionalSecurityInformation
-ÔÚÕâÀï·µ»ØResultCode,ResultCodeExtended,Balance,»¹ÓĞ³õÊ¼»¯µÄÊ±ºò»á¶ÁÈ¡AdditionalSecurityInformationÀ´»ñµÃBrandUrlMapÖ®ÀàµÄ¡£
+## å…³äºCURRENT è®¾ç½®çš„Xmlå’ŒAdditionalSecurityInformation
+åœ¨è¿™é‡Œè¿”å›ResultCode,ResultCodeExtended,Balance,è¿˜æœ‰åˆå§‹åŒ–çš„æ—¶å€™ä¼šè¯»å–AdditionalSecurityInformationæ¥è·å¾—BrandUrlMapä¹‹ç±»çš„ã€‚
 
-¿´´úÂë°É£¬ËµÆğÀ´Âé·³¡£
+çœ‹ä»£ç å§ï¼Œè¯´èµ·æ¥éº»çƒ¦ã€‚
 
-## ¹ØÓÚioEvent
-ioEventÊÇ¸öJson,´óÔ¼¸ñÊ½ÊÇÕâÑù
+## å…³äºioEvent
+ioEventæ˜¯ä¸ªJson,å¤§çº¦æ ¼å¼æ˜¯è¿™æ ·
 
 	{
-		deviceType : 0,	//ioEventÀàĞÍ£¬¿ÉÑ¡: 
-				//1 : MessageEvent	(ÔÚVFDÉÏÏÔÊ¾ĞÅÏ¢£©
-				//2 : SoundEvent		(²¥·ÅÉùÒô£©
-				//3 : LedEvent		(¿ØÖÆLEDÓ¦¸Ã£¬µ«ÊÇ¶ÔAimeÃ»ÓÃ£©
-				//16 : AmountEvent	(ÏÔÊ¾ÒªÖ§¸¶µÄ½ğ¶î£¬µ«ÊÇÃ»µ÷ÆğÀ´)
+		deviceType : 0,	//ioEventç±»å‹ï¼Œå¯é€‰: 
+				//1 : MessageEvent	(åœ¨VFDä¸Šæ˜¾ç¤ºä¿¡æ¯ï¼‰
+				//2 : SoundEvent		(æ’­æ”¾å£°éŸ³ï¼‰
+				//3 : LedEvent		(æ§åˆ¶LEDåº”è¯¥ï¼Œä½†æ˜¯å¯¹Aimeæ²¡ç”¨ï¼‰
+				//16 : AmountEvent	(æ˜¾ç¤ºè¦æ”¯ä»˜çš„é‡‘é¢ï¼Œä½†æ˜¯æ²¡è°ƒèµ·æ¥)
 				//32 : EnableCancelEvent
 				//48 : ClientIoSaveDealNumberEvent
 				//64 : ProgressEvent
 		deviceNumber : 0,
 		actionType : 0,
-		sendData : [],	//ioEvent²ÎÊı£¬Òª½«byteÖğÎ»×ªÎªsigned int£¬ÓĞÒÔÏÂÇé¿ö:
+		sendData : [],	//ioEventå‚æ•°ï¼Œè¦å°†byteé€ä½è½¬ä¸ºsigned intï¼Œæœ‰ä»¥ä¸‹æƒ…å†µ:
 				//MessageEvent {(brandType 2byte),(messageId 2byte),(timeout? 2byte)}
-				//(´ËÊ±ÏµÍ³´ÓResource.xmlÕÒ¶ÔÓ¦brandºÍidµÄmessageÏÔÊ¾ÔÚvfdÉÏ)
+				//(æ­¤æ—¶ç³»ç»Ÿä»Resource.xmlæ‰¾å¯¹åº”brandå’Œidçš„messageæ˜¾ç¤ºåœ¨vfdä¸Š)
 				//
 				//SoundEvent {(brandType 2byte),(soundId 1byte),(timeout 2byte)}
-				//(²¥·ÅÖ¸¶¨brandºÍidµÄsoundÎÄ¼ş)
+				//(æ’­æ”¾æŒ‡å®šbrandå’Œidçš„soundæ–‡ä»¶)
 				//
 				//LedEvent {0,0,timeOut(2byte),param2(2byte),param3(2byte),param4(2byte)}
-				//(ÒòÎªÃ»´¥·¢ËùÒÔ²»ÖªµÀÓĞÉ¶ÓÃ£¬µ«ÊÇdeviceNumber 0=FFFF0000 1=FF00FF00 2=FF0000FF 3=00000000 4=FFFFFFFF)
+				//(å› ä¸ºæ²¡è§¦å‘æ‰€ä»¥ä¸çŸ¥é“æœ‰å•¥ç”¨ï¼Œä½†æ˜¯deviceNumber 0=FFFF0000 1=FF00FF00 2=FF0000FF 3=00000000 4=FFFFFFFF)
 				//
 				//AmountEvent {(brandType 2byte)(id 1byte)(amount 4byte)(amountBalance 4byte)(timeout 2byte)}
-				//(ÕÒÖ¸¶¨brandºÍidµÄamount×Ö·û´® ÓÃÓÚÏÔÊ¾Ö§¸¶½ğ¶î)
+				//(æ‰¾æŒ‡å®šbrandå’Œidçš„amountå­—ç¬¦ä¸² ç”¨äºæ˜¾ç¤ºæ”¯ä»˜é‡‘é¢)
 				//
-				//EnableCancelInfo ²»ĞèÒª²ÎÊı
+				//EnableCancelInfo ä¸éœ€è¦å‚æ•°
 				//
 				//SaveDealNumberIo {(brandID 2byte)(dealNumber string)}
 		screen : false
 	}
 
-## Thinca·½·¨
-¹ÒIDAµÄÊ±ºò¿´´óÊı×Ö»áºÃÓÃ
+## Thincaæ–¹æ³•
+æŒ‚IDAçš„æ—¶å€™çœ‹å¤§æ•°å­—ä¼šå¥½ç”¨
 
     /* enum Thincacloud::ThincaMethod
 		THINCA_METHOD_INIT_AUTH_TERM  = 1010001h
@@ -503,8 +503,8 @@ ioEventÊÇ¸öJson,´óÔ¼¸ñÊ½ÊÇÕâÑù
         CheckCard/balanceInquiry.jsp tlamBalanceInquiry.jsp 0x3050001 / 0x16 0x01
         DircetIO/history.jsp 0x3060001 / 0x17 0x04
 
-## Thinca´íÎóÂë
-Ó¦¸ÃÓĞÓÃ
+## Thincaé”™è¯¯ç 
+åº”è¯¥æœ‰ç”¨
 
 	/* enum Thincacloud::ThincaError, copyof_1329, width 4 bytes
 		THINCA_S_SUCCESS  = 0
