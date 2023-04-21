@@ -212,17 +212,17 @@ namespace miniThincaLib
         /// 生成能让机台调用Aime读卡器的Tcap包序列(显示刷卡提示,闪烁白灯,打开读卡器并开始检测卡片,返回机台基础信息)
         /// </summary>
         /// <returns></returns>
-        public static byte[] BuildGetAimeCardResult(byte brandType,byte messageId)
+        public static byte[] BuildGetAimeCardResult(byte brandType,byte messageId,short Timeout = 5000)
         {
             var OperatePkt = new TcapPacket(TcapPacketType.OperateEntity);
             //显示信息
             OperatePkt.AddSubType(BasicBuilder.ShowMessage(brandType, messageId));
             //读卡器闪烁白灯 时长5秒 开0.5秒关0.5秒
-            OperatePkt.AddSubType(BasicBuilder.OperateLED(BasicBuilder.LEDMode.Blink, BasicBuilder.LEDColor.White, 5000,500,500));
+            OperatePkt.AddSubType(BasicBuilder.OperateLED(BasicBuilder.LEDMode.Blink, BasicBuilder.LEDColor.White, Timeout, 500,500));
             //打开读卡器
             OperatePkt.AddSubType(BasicBuilder.OpenAimeReader());
             //5秒内检测读到的卡片
-            OperatePkt.AddSubType(BasicBuilder.DetectAimeCard(5000));
+            OperatePkt.AddSubType(BasicBuilder.DetectAimeCard(Timeout));
             //返回机台信息
             OperatePkt.AddSubType(BasicBuilder.RequestOperateXml());
 

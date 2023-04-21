@@ -81,13 +81,13 @@ namespace miniThincaLib
 
                             if(!machineInfo.ContainsKey(termSerial + requestMethod))
                                 machineInfo.Add(termSerial + requestMethod, new MachineInfo(TcapRequestType.AuthorizeSales, MachineState.RequestOp_InitCardSwipe));
-                            return Builder.BuildGetAimeCardResult(brandType:8,messageId:30);
+                            return Builder.BuildGetAimeCardResult(brandType:8,messageId:30,Timeout:5000);
 
                         case TcapRequestType.BalanceInquire:
                             if (string.IsNullOrEmpty(termSerial)) Builder.BuildFarewellResult(); //这时候是肯定有termSerial的(因为emStage2),没有就跳
 
                             machineInfo.Add(termSerial + requestMethod, new MachineInfo(TcapRequestType.BalanceInquire, MachineState.RequestOp_InitCardSwipe));
-                            return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30);
+                            return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30, Timeout: 5000);
 
                         default:                        //其他未知方法直接送走
                             return Builder.BuildFarewellResult();
@@ -179,7 +179,7 @@ namespace miniThincaLib
             else
             {
                 currentInfo.state = MachineState.RequestOp_InitCardSwipe;
-                return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30);
+                return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30, Timeout: 5000);
             }
         }
 
@@ -221,11 +221,6 @@ namespace miniThincaLib
                     currentInfo.state = MachineState.RequestOp_SuccessPayment;
                     return Builder.BuildSuccessPaymentResult(cardNo:cardId,seqNumber:SequenceNumber, amount:AmountInt,brandType:BrandInt);
                 }
-                else if((currentInfo.lastRequest - currentInfo.firstRequest).TotalSeconds >= 30)
-                {
-                    machineInfo.Remove(termSerial + TcapRequestType.AuthorizeSales);
-                    return Builder.BuildFarewellResult();
-                }
                 else
                 {
                     //想了下 还是让他每5秒初始化一次算了 不然一开始停不下来
@@ -241,7 +236,7 @@ namespace miniThincaLib
             else
             {
                 currentInfo.state = MachineState.RequestOp_InitCardSwipe;
-                return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30);
+                return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30, Timeout: 5000);
             }
 
         }
