@@ -8,17 +8,22 @@
 		string _ipAddress = "127.0.0.1";
 
 		/// <summary>
+		/// 输出请求和回传Hex
+		/// </summary>
+		public bool printRawHex { get; set; } = false;
+
+		/// <summary>
 		/// 可用的emoney brand开关
 		/// </summary>
 		Dictionary<Models.ThincaBrandType, bool> _brandSwitch =
 			new Dictionary<Models.ThincaBrandType, bool>()
 		{
-			{Models.ThincaBrandType.Nanaco,false},		
+			{Models.ThincaBrandType.Nanaco,true},		//入口有一个tlamAuthorizeSales.jsp,之后可以了
             {Models.ThincaBrandType.Edy,false},			//还没写通，报错
-            {Models.ThincaBrandType.Id,false},			//还没写通，刷卡后不认
+            {Models.ThincaBrandType.Id,false},			//还没写通，刷卡后不发包
             {Models.ThincaBrandType.Quicpay,false},		//用不了
-            {Models.ThincaBrandType.Transport,false},
-            {Models.ThincaBrandType.Waon,false},
+            {Models.ThincaBrandType.Transport,true},
+            {Models.ThincaBrandType.Waon,true},
             {Models.ThincaBrandType.Nanaco2,false},		//用不了
             {Models.ThincaBrandType.Paseli,true},
             {Models.ThincaBrandType.Sapica,false},		//用不了(游戏ignore)

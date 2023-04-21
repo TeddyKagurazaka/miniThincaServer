@@ -11,6 +11,7 @@ namespace miniThincaLib
 			emStage2,
 			AuthorizeSales,
 			BalanceInquire,
+            Remove,
 			Others
 		}
 
@@ -51,7 +52,16 @@ namespace miniThincaLib
 		public byte[] HandleTcapRequest(TcapRequestType requestMethod, byte[] Input,string brandName = "",string termSerial = "")
 		{
 			var RequestMessage = new Models.TcapMessageRequest(Input);
-            
+            Logger.Log("Packet Type:" + RequestMessage.pktType);
+            foreach(var msgs in RequestMessage.messages)
+            {
+                Logger.Log("Message Type:" + msgs.msgType);
+                //Logger.Log("Message Content:" + msgs.MessageHex);
+                if(msgs.ParsedMessageBody.Count > 0)
+                    foreach (var parsedMessage in msgs.ParsedMessageBody)
+                        Logger.Log("Parsed Message:" + (parsedMessage.DevType == -1 ? "" : parsedMessage.DevType + " ") +  parsedMessage.DevName);
+                else Logger.Log("Message Content:" + msgs.MessageHex);
+            }
 
 			switch (RequestMessage.pktType)
 			{
@@ -62,7 +72,8 @@ namespace miniThincaLib
 					{
 						case TcapRequestType.initAuth:
 						case TcapRequestType.emStage2:  //认证的时候先获取机器信息（需要序列号）
-							return Builder.BuildGetMachineInfoPacket();
+                        case TcapRequestType.Remove:
+                            return Builder.BuildGetMachineInfoPacket();
 
 
 						case TcapRequestType.AuthorizeSales:    //付款的时候先打开Aime读卡器
@@ -78,7 +89,6 @@ namespace miniThincaLib
                             machineInfo.Add(termSerial + requestMethod, new MachineInfo(TcapRequestType.BalanceInquire, MachineState.RequestOp_InitCardSwipe));
                             return Builder.BuildGetAimeCardResult(brandType: 8, messageId: 30);
 
-
                         default:                        //其他未知方法直接送走
                             return Builder.BuildFarewellResult();
                     }
@@ -89,6 +99,9 @@ namespace miniThincaLib
                             return HandleInitAuthPacket(RequestMessage);
                         case TcapRequestType.emStage2:
                             return HandleInitAuthPacket(RequestMessage,true);
+                        case TcapRequestType.Remove:
+                            return Builder.BuildFarewellResult();
+
                         case TcapRequestType.AuthorizeSales:
                             if (string.IsNullOrEmpty(termSerial)) Builder.BuildFarewellResult();
 

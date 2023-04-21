@@ -49,7 +49,8 @@ public class miniThinca
         #region 处理请求
         Logger.Log("================");
         Logger.Log("Request:" + Context.Request.RawUrl);
-        Logger.Log("Content:" + (Input.Length == 0 ? "" : HexByteArrayExtensionMethods.ToHexString(Input)));
+        if(config.printRawHex)
+            Logger.Log("ContentHex:" + (Input.Length == 0 ? "" : HexByteArrayExtensionMethods.ToHexString(Input)));
         var RequestRawUrlParam = Context.Request.RawUrl.Split('/',StringSplitOptions.RemoveEmptyEntries);
 
         if(RequestRawUrlParam.Length >= 1 && RequestRawUrlParam[0] == "thinca")
@@ -57,6 +58,7 @@ public class miniThinca
             if (RequestRawUrlParam.Length == 1) //initAuth入口点
             {
                 // case "/thinca":
+                Logger.Log("Content:" + Encoding.UTF8.GetString(Input));
                 OutputStr = Newtonsoft.Json.JsonConvert.SerializeObject(new Models.Activation.ActivateClass());
                 Context.Response.AddHeader("x-certificate-md5", "757cffc53b98fc903476de6a672a1000");
             }
@@ -66,11 +68,13 @@ public class miniThinca
                 {
                     //SEGA部分
                     case "terminals":   //配置同步(initAuth后)
+                        Logger.Log("Content:" + Encoding.UTF8.GetString(Input));
                         OutputStr = Newtonsoft.Json.JsonConvert.SerializeObject(new Models.Activation.initSettingClass("10"));
                         break;
                     case "counters":    //投币信息上传(initAuth后) 不用返回
                     case "statuses":    //状态信息上传(initAuth后) 不用返回
                     case "sales":
+                        Logger.Log("Content:" + Encoding.UTF8.GetString(Input));
                         break;
 
                     //thinca部分
@@ -111,6 +115,7 @@ public class miniThinca
                         //简化一点 暂时不判断品牌名
                         switch (RequestRawUrlParam[4])
                         {
+                            case "tlamAuthorizeSales.jsp":
                             case "payment.jsp":
                                 OutputStr = string.Format("SERV={0}",
                                     config.ReturnBrandPaymentStage2Address(RequestRawUrlParam[2], RequestRawUrlParam[3]));
@@ -139,6 +144,23 @@ public class miniThinca
                                     termSerial: RequestRawUrlParam[3]);
                                 Context.Response.AddHeader("Content-Type", "application/x-tcap");
                                 break;
+
+
+                            case "remove.jsp":
+                                OutputStr = string.Format("SERV={0}",
+                                    config.ReturnBrandPaymentStage2Address(RequestRawUrlParam[2], RequestRawUrlParam[3],"remove_stage2"));
+                                Context.Response.AddHeader("Content-Type", "application/x-tlam");
+                                break;
+
+                            case "remove_stage2":
+                                UseBinary = true;
+                                OutputBinary = handler.HandleTcapRequest(
+                                    requestMethod: TcapHandler.TcapRequestType.Remove,
+                                    Input: Input,
+                                    brandName: RequestRawUrlParam[2],
+                                    termSerial: RequestRawUrlParam[3]);
+                                Context.Response.AddHeader("Content-Type", "application/x-tcap");
+                                break;
                         }
                         break;
                 }
@@ -151,7 +173,8 @@ public class miniThinca
         if (!UseBinary)
             OutputBinary = Encoding.UTF8.GetBytes(OutputStr);
 
-        Logger.Log("Response:" + (OutputBinary.Length == 0 ? "" : HexByteArrayExtensionMethods.ToHexString(OutputBinary)));
+        if (config.printRawHex)
+            Logger.Log("Response:" + (OutputBinary.Length == 0 ? "" : HexByteArrayExtensionMethods.ToHexString(OutputBinary)));
 
         try
         {

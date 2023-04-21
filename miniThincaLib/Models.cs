@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml;
 using miniThincaLib.Helper;
 using static miniThincaLib.Helper.Helper;
 using static miniThincaLib.Models.Receipts.ReceiptInfo_Base;
@@ -175,15 +176,77 @@ namespace miniThincaLib
         /// </summary>
         public class TcapMessageRequestBody
         {
+            public class Message_Struct
+            {
+                public short DevType = -1;
+                public string DevName = "";
+
+                public Message_Struct(short devType = -1, string devName = "")
+                {
+                    DevType = devType;
+                    DevName = devName;
+                }
+            }
+
             public TcapPacketType pktType = TcapPacketType.Unknown;
             public TcapRespMessageType msgType = TcapRespMessageType.Unknown;
             public byte[] MessageBody;
             public string MessageHex { get { return HexByteArrayExtensionMethods.ToHexString(MessageBody); } }
+
+            public List<Message_Struct> ParsedMessageBody = new List<Message_Struct>();
             public TcapMessageRequestBody(TcapPacketType pktType, TcapRespMessageType msgType, byte[] messageBody)
             {
                 this.pktType = pktType;
                 this.msgType = msgType;
                 MessageBody = messageBody;
+
+                ParseMessagePayload(msgType, messageBody);
+            }
+
+            private void ParseMessagePayload(TcapRespMessageType pktType, byte[] message)
+            {
+                switch (pktType)
+                {
+                    case TcapRespMessageType.op25_ResponseDevicesMessage:
+                        //op25的格式 00 0x(设备类型) 00 00 xx(字符串长度) (字符串)
+                        using (var memStream = new MemoryStream(message))
+                        using (var br = new BinaryReader(memStream))
+                        {
+                            while (br.BaseStream.Position != br.BaseStream.Length)
+                            {
+                                var devType = br.ReadBytes(2);  // 00 0x
+                                Array.Reverse(devType);
+                                var devTypeInt = BitConverter.ToInt16(devType, 0);
+
+                                br.ReadBytes(2);    //跳过00
+                                var strLength = br.ReadByte();
+                                var Str1 = new byte[strLength];
+                                br.Read(Str1, 0, strLength);
+                                strLength = br.ReadByte();
+                                var Str2 = new byte[strLength];
+                                br.Read(Str2, 0, strLength);
+
+                                var StrFinal = Str1.Concat(new byte[] { 0x20}).Concat(Str2).ToArray();
+                                var DevName = Encoding.UTF8.GetString(StrFinal);
+
+                                ParsedMessageBody.Add(new Message_Struct(devTypeInt, DevName));
+                            }
+
+                        }
+                        break;
+                    case TcapRespMessageType.op26_ResponseDeviceResponseMessage_ResponseFeaturesMessage:
+                        var NoHeaderMsg = message.Skip(6).ToArray();
+                        if(NoHeaderMsg.Length>0)
+                        {
+                            var XmlBody = Encoding.UTF8.GetString(NoHeaderMsg);
+                            ParsedMessageBody.Add(new Message_Struct(-1, XmlBody));
+                        }
+                        else
+                        {
+                            //ParsedMessageBody.Add(new Message_Struct(-1, "Previous OperatePkt Applied."));
+                        }
+                        break;
+                }
             }
         }
 
@@ -223,7 +286,6 @@ namespace miniThincaLib
                     }
                 }
             }
-
             private void ParseMessageBody(byte[] body)
             {
                 using (var memStream = new MemoryStream(body))
@@ -249,6 +311,8 @@ namespace miniThincaLib
                     }
                 }
             }
+
+            
         }
 
         public class Receipts
@@ -910,6 +974,11 @@ namespace miniThincaLib
                 var properties = doc.CreateElement("properties");
                 userdata.AppendChild(properties);
 
+                var TrainingMode = doc.CreateElement("boolValue");
+                TrainingMode.SetAttribute("name", "TrainingMode");
+                TrainingMode.SetAttribute("value", "0");
+                properties.AppendChild(TrainingMode);
+
                 //longValue
                 var ResultCode = doc.CreateElement("longValue");
                 ResultCode.SetAttribute("name", "ResultCode");
@@ -948,27 +1017,51 @@ namespace miniThincaLib
                 properties.AppendChild(SettledAmount);
 
                 //StringValue
+                var accNumber = doc.CreateElement("stringValue");
+                accNumber.SetAttribute("name", "AccountNumber");
+                accNumber.SetAttribute("value", account);
+                properties.AppendChild(accNumber);
+
                 var addSecNode = doc.CreateElement("stringValue");
                 addSecNode.SetAttribute("name", "AdditionalSecurityInformation");
                 addSecNode.SetAttribute("value", AdditionalSecurityInformation);
                 properties.AppendChild(addSecNode);
 
                 var rand = new Random();
-
                 var approvalCode = doc.CreateElement("stringValue");
                 approvalCode.SetAttribute("name", "ApprovalCode");
                 approvalCode.SetAttribute("value", rand.Next(0, int.MaxValue).ToString());
                 properties.AppendChild(approvalCode);
 
-                var accNumber = doc.CreateElement("stringValue");
-                accNumber.SetAttribute("name", "AccountNumber");
-                accNumber.SetAttribute("value", account);
-                properties.AppendChild(accNumber);
+                var ccID = doc.CreateElement("stringValue");
+                ccID.SetAttribute("name", "CardCompanyID");
+                ccID.SetAttribute("value", ((int)CompanyName.iD).ToString());
+                properties.AppendChild(ccID);
 
                 var CenterResultCode = doc.CreateElement("stringValue");
                 CenterResultCode.SetAttribute("name", "CenterResultCode");
                 CenterResultCode.SetAttribute("value", "0");
                 properties.AppendChild(CenterResultCode);
+
+                var dailyLog = doc.CreateElement("stringValue");
+                dailyLog.SetAttribute("name", "DailyLog");
+                dailyLog.SetAttribute("value", "{}");
+                properties.AppendChild(dailyLog);
+
+                var paymentDetail = doc.CreateElement("stringValue");
+                paymentDetail.SetAttribute("name", "PaymentDetail");
+                paymentDetail.SetAttribute("value", "{}");
+                properties.AppendChild(paymentDetail);
+
+                var slipNumber = doc.CreateElement("stringValue");
+                slipNumber.SetAttribute("name", "SlipNumber");
+                slipNumber.SetAttribute("value", "1234");
+                properties.AppendChild(slipNumber);
+
+                var transNumber = doc.CreateElement("stringValue");
+                transNumber.SetAttribute("name", "TransactionNumber");
+                transNumber.SetAttribute("value", "1145143");
+                properties.AppendChild(transNumber);
 
                 return doc.InnerXml;
             }

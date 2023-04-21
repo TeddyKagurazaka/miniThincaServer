@@ -299,9 +299,11 @@ Body包的格式如下：
 ## 关于OperateEntity:RequestOperateDeviceMessage
 OperateDeviceMessage可以直接操作ResponseDevicesMessage所列举的设备，有时候操作相关设备才能完成整个流程。
 
-此时message的格式为 (COMMAND 长度 1byte)(COMMAND 字符串)(00 00)(Payload 长度+2 2byte)(Payload 长度 2byte)(Payload ?byte) <br />
-如果没有Payload，Command结束后后跟(00 00 00 00)即可。<br />
-有些Command会要求省略(Payload长度 + 2)部分，下面会注明。
+此时message的格式为：
+
+	(COMMAND 长度 1byte) (COMMAND 字符串) (00 00) (Payload 长度+2 2byte) (Payload 长度 2byte)(Payload ?byte)
+	如果没有Payload，Command结束后后跟 (00 00 00 00) 即可。	(相当于00 00 然后Payload长度0)
+	有些Command会要求省略(Payload长度 + 2)部分，下面会注明。
 
 以SEGAY为例，一般ResponseDevicesMessage会发送以下设备信息：
 
@@ -312,7 +314,7 @@ OperateDeviceMessage可以直接操作ResponseDevicesMessage所列举的设备�
 	00 05 -> Generic R/W Event
 	00 06 -> Generic R/W Status
 	00 07 -> Generic R/W Option
-	00 08 -> Gemeroc NFC RW
+	00 08 -> Generic NFC RW
 
 在构造OperateDeviceMessage包的时候，所设置的param代表对以上指定设备的操作。<br />
 <i>所以RequestFelicaOpenRwRequestMessage 必须设置param为00 04,因为只可能对Felica R/W操作</i>
@@ -324,18 +326,19 @@ OperateDeviceMessage可以直接操作ResponseDevicesMessage所列举的设备�
 		CURRENT: 设置系统信息,XML格式.(用于更新AdditionalJson和回传状态码等，很重要）
 			(initAuth时候Payload要求前跟(EF BB BF) 3 byte，Payment时不要求）
 		RESULT: 效果和CURRENT一致
-		CANSEL: 未知
+		CANCEL: 未知
 		TIMESTAMP: 返回设备侧当前时间
 		WAIT: 等待指定长度时间，Payload为8byte Int64。
 		UNIXTIME: 返回设备侧UNIX时间戳
 		UNIXTIMEWAIT: 根据UNIX时间戳等待，Payload为10byte(8byte Int64)(2byte)
-		STATUS: 返回 illegal general client
+		STATUS: 无效（报错并返回 illegal general client）
 
 	00 02 -> General Status
 		STATUS: 效果未知，Payload为6byte(00 00)(00 02)(00 01)
 
 	00 03 -> General Option
 		STATUS: 触发ioEvent，Payload为(00 00 00 00 00 00 00 00)(明文Json)
+		ioEvent会在下面解释
 
 	00 05 -> Generic R/W Event (操作Aime LED）(该类型包要求省略(Payload长度 + 2)部分，否则读取会错位)
 		CMD包塞任意可读字符即可，程序不处理，但必须得有
